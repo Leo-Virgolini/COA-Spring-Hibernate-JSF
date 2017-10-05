@@ -1,0 +1,485 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="/WEB-INF/layout/plantillaAdmin.xhtml">
+
+            <ui:define name="content">
+
+                <h:form id="form">
+
+                    <!-- DataTable muestra todos los profesores -->
+                    <p:dataTable id="profesoresDT" var="p" value="#{profesoresManagedBean.profesores}" widgetVar="profesoresTable" emptyMessage="No se encontraron profesores con ese criterio."
+                                 filteredValue="#{profesoresManagedBean.profesoresFiltrados}" rowKey="#{p.id}" editable="true" rowStyleClass="#{(p.habilitado eq false) ? 'deshabilitado':null}"
+                                 rows="10" tableStyle="width:auto" 
+                                 paginator="true" paginatorAlwaysVisible="false"
+                                 currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}" 
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                                 rowsPerPageTemplate="5,10,15">
+
+                        <!-- Buscador General -->
+                        <f:facet name="header">
+                            <h1>Profesores</h1>                
+                            <h:outputText value="Buscar " />
+                            <p:inputText id="globalFilter" onkeyup="PF('profesoresTable').filter()" style="width:150px;" placeholder="Ingresa palabras clave"/>
+                            <!-- Exporter: WORD -->
+                            <h:commandLink immediate="true">
+                                <p:graphicImage name="/images/excel3.png" width="40" style="vertical-align: middle;display: inline;"/>
+                                <p:dataExporter type="xls" target="profesoresDT" fileName="Profesores" />
+                            </h:commandLink>   
+                            <p:commandButton id="toggler" type="button" value="Columnas" style="float:right" icon="ui-icon-calculator" />
+                            <p:columnToggler datasource="profesoresDT" trigger="toggler"/>  
+                        </f:facet>
+
+                        <!-- Eventos onRowEdit y onRowEditCancel -->
+                        <p:ajax event="rowEdit" listener="#{profesoresManagedBean.onRowEdit}" update=":form:message" oncomplete="PF('profesoresTable').clearFilters()"/>
+                        <p:ajax event="rowEditCancel" listener="#{profesoresManagedBean.onRowCancel}" update=":form:message" />
+
+                        <!-- Columnas -->
+
+                        <!-- Ver datos de la cuenta -->
+                        <p:column headerText="Datos Cuenta" exportable="false" style="width: 5%; text-align: center;">
+                            <f:facet name="header"> 
+                                Datos Cuenta
+                                <i class="fa fa-user-circle" aria-hidden="true" style="color: #045491;"/>
+                            </f:facet>
+                            <p:commandButton process="profesoresDT" update=":form:datosDetail" icon="fa fa-fw fa-search" style="height: 40px; color: #045491" 
+                                             oncomplete="PF('datosDialog').show()">
+                                <f:setPropertyActionListener value="#{p}" target="#{profesoresManagedBean.profesorSeleccionado}" />
+                            </p:commandButton>
+                        </p:column>
+
+                        <!-- Ver auditoría -->
+                        <p:column headerText="Auditoría de la Cuenta" exportable="false" style="text-align: center">
+                            <f:facet name="header">
+                                Auditoría de la Cuenta
+                                <i class="fa fa-history" aria-hidden="true" style="color: #045491;"/>
+                            </f:facet>
+                            <p:commandButton process="profesoresDT" update=":form:multiAuditoriaDetail" icon="fa fa-history fa-lg" style="width: 35px;height: 40px; color: #045491" 
+                                             actionListener="#{profesoresManagedBean.obtenerAuditoriaProfesor(p.id)}" oncomplete="PF('multiAuditoriaDialog').show();PF('multiAuditoriaDialog').initPosition();"/>
+                        </p:column>
+
+                        <p:column headerText="Nombre" filterBy="#{p.nombre}" filterMatchMode="contains" filterStyle="width:80%" sortBy="#{p.nombre}">
+                            <p:cellEditor>     
+                                <f:facet name="output"><h:outputText value="#{p.nombre}"/></f:facet>
+                                <f:facet name="input">
+                                    <p:inputText id="nombre" label="Nombres" required="true" size="30" maxlength="30" requiredMessage="Ingresa el nombre." 
+                                                 value="#{p.nombre}">                   
+                                        <p:keyFilter regEx="/[a-zá-ú ñ]/i"/>
+                                        <f:validateRegex pattern="^[a-zA-Zá-úñÑ ]+$" />
+                                        <f:validateLength minimum="3" maximum="30"/>
+                                    </p:inputText>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Apellido" filterBy="#{p.apellido}" filterMatchMode="contains" filterStyle="width:80%" sortBy="#{p.apellido}">
+                            <p:cellEditor>     
+                                <f:facet name="output"><h:outputText value="#{p.apellido}" /></f:facet>
+                                <f:facet name="input">
+                                    <p:inputText id="apellido" label="Apellido" required="true" size="30" maxlength="30" requiredMessage="Ingresa el apellido." 
+                                                 value="#{p.apellido}">
+                                        <p:keyFilter regEx="/[a-zá-ú ñ]/i"/>
+                                        <f:validateRegex pattern="^[a-zA-Zá-úñÑ ]+$" />
+                                        <f:validateLength minimum="3" maximum="30"/>
+                                    </p:inputText>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>                   
+
+                        <p:column headerText="DNI" filterBy="#{p.dni}" filterMatchMode="contains" filterStyle="width: 72px" filterMaxLength="9">                           
+                            <p:cellEditor>     
+                                <f:facet name="output"><h:outputText value="#{p.dni}" /></f:facet>
+                                <f:facet name="input">
+                                    <p:inputText id="dni" label="Documento" required="true" size="8" maxlength="8" requiredMessage="Ingresa el DNI."
+                                                 value="#{p.dni}">      
+                                        <p:keyFilter regEx="/[0-9]/"/>
+                                        <f:validateLongRange minimum="10000000" maximum="100000000" />   
+                                        <f:validateRegex pattern="^[0-9]+$" />
+                                        <f:validateLength minimum="8" maximum="8" />
+                                    </p:inputText>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Fecha de nacimiento" filterBy="#{p.fechaNacimiento}" filterMatchMode="contains" sortBy="#{p.fechaNacimiento}" filterStyle="width: 64px" filterMaxLength="10">                           
+                            <f:facet name="header">
+                                Fecha de nacimiento
+                                <i class="fa fa-calendar" aria-hidden="true" style="color: #045491;"/>
+                            </f:facet>
+                            <p:cellEditor>     
+                                <f:facet name="output">
+                                    <h:outputText value="#{p.fechaNacimiento}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputText>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:calendar label="Fecha de Nacimiento" pattern="dd/MM/yyyy" mask="true" locale="es" pagedate="1/7/1980" mindate="1/1/1920" maxdate="31/12/1999" 
+                                                yearRange="c-70:c+19" showOn="button" navigator="true" size="10" required="true" requiredMessage="Ingresa la fecha de nacimiento."
+                                                value="#{p.fechaNacimiento}">
+                                        <p:keyFilter regEx="/[0-9]/"/>
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        <f:validateLength minimum="10"/>
+                                        <f:validator validatorId="birthDateValidator"/>
+                                    </p:calendar>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Sexo" style="text-align: center;" filterBy="#{p.sexo}" sortBy="#{p.sexo}" filterMatchMode="contains">
+                            <f:facet name="header">
+                                Sexo
+                                <i class="fa fa-venus-mars" aria-hidden="true" style="color: #045491;"/>
+                            </f:facet>
+                            <f:facet name="filter">
+                                <p:selectOneButton onchange="PF('profesoresTable').filter()">
+                                    <f:selectItem itemLabel="Todos" itemValue="" />
+                                    <f:selectItem itemLabel="M" itemValue="M" />
+                                    <f:selectItem itemLabel="F" itemValue="F" />
+                                </p:selectOneButton>
+                            </f:facet>  
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <p:graphicImage rendered="#{p.sexo == 'M'}" title="M" alt="M">
+                                        <i class="fa fa-male" aria-hidden="true" style="color: #0071B7;"/>
+                                    </p:graphicImage>
+                                    <p:graphicImage rendered="#{p.sexo == 'F'}" title="F" alt="F">
+                                        <i class="fa fa-female" aria-hidden="true" style="color: #ff33cc;"/>
+                                    </p:graphicImage>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <h:selectOneMenu value="#{p.sexo}" style="float: none;width: 90%">
+                                        <f:selectItem itemLabel="M" itemValue="M"/>
+                                        <f:selectItem itemLabel="F" itemValue="F"/>
+                                    </h:selectOneMenu>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="E-mail" filterBy="#{p.email}" filterMatchMode="contains" filterStyle="width:80%" width="8%" sortBy="#{p.email}">
+                            <f:facet name="header"> 
+                                E-mail
+                                <i class="fa fa-envelope" aria-hidden="true" style="color: #045491;"/>
+                            </f:facet>
+                            <p:cellEditor>     
+                                <f:facet name="output"><h:outputText value="#{p.email}"/></f:facet>
+                                <f:facet name="input">
+                                    <p:inputText id="email" label="E-mail" required="true" size="30" maxlength="30" requiredMessage="Ingresa el e-mail." 
+                                                 value="#{p.email}">
+                                        <p:keyFilter regEx="/[a-z0-9_\.\-@]/i"/>
+                                        <f:validateRegex pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                                        <f:validateLength minimum="7" maximum="30" />
+                                    </p:inputText>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Teléfono">   
+                            <f:facet name="header">
+                                Teléfono
+                                <i class="fa fa-phone-square" aria-hidden="true" style="color: #045491;"/>
+                            </f:facet>
+                            <p:cellEditor>     
+                                <f:facet name="output"><h:outputText value="#{p.telefono}" /></f:facet>
+                                <f:facet name="input">
+                                    <p:inputText id="telefono" label="Teléfono" required="true" size="8" maxlength="8" requiredMessage="Ingresa el número de teléfono."
+                                                 value="#{p.telefono}">
+                                        <p:keyFilter regEx="/[0-9]/"/>
+                                        <f:validateRegex pattern="^[0-9]+$" />
+                                        <f:validateLength minimum="8" maximum="10"/>
+                                    </p:inputText>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Celular">     
+                            <f:facet name="header">
+                                Celular
+                                <i class="fa fa-mobile-phone" aria-hidden="true" style="color: #045491;"/>
+                            </f:facet>
+                            <p:cellEditor>     
+                                <f:facet name="output"><h:outputText value="#{p.celular}"/></f:facet>
+                                <f:facet name="input">
+                                    <p:inputMask id="celular" label="Celular" mask="(999)159999-9999" required="true" size="16" maxlength="16" requiredMessage="Ingresa el número de celular." 
+                                                 value="#{p.celular}">
+                                        <p:keyFilter regEx="/[0-9]/"/>
+                                        <f:validateRegex pattern="^[0-9)(-]+$" />
+                                        <f:validateLength minimum="16" maximum="16"/>
+                                    </p:inputMask>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Localidad, Distrito" filterBy="#{p.localidad.descripcion}, #{p.localidad.distrito.descripcion}" filterMatchMode="contains" filterStyle="width:80%" sortBy="#{p.localidad.descripcion}, #{p.localidad.distrito.descripcion}">       
+                            <p:cellEditor>     
+                                <f:facet name="output"><h:outputText value="#{p.localidad.descripcion}, #{p.localidad.distrito.descripcion}" /></f:facet>
+                                <f:facet name="input">
+                                    <p:selectOneMenu value="#{p.localidad.id}" label="Localidad" converter="#{localidadConverter}" converterMessage="El valor seleccionado es incorrecto." filter="true" filterMatchMode="contains">
+                                        <f:selectItems value="#{localidadesManagedBean.localidadesBsAs}" var="l" itemLabel="#{l.descripcion}, #{l.distrito.descripcion}" itemValue="#{l.id}" />
+                                    </p:selectOneMenu>
+                                </f:facet>                                
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Dirección" filterBy="#{p.direccion}" filterStyle="width:80%" filterMatchMode="contains">                  
+                            <p:cellEditor>     
+                                <f:facet name="output"><h:outputText value="#{p.direccion}"/></f:facet>
+                                <f:facet name="input">
+                                    <p:inputText id="direccion" label="Dirección" required="true" size="25" maxlength="25" requiredMessage="Ingresa la dirección." 
+                                                 value="#{p.direccion}">
+                                        <f:validateRegex pattern="^[a-zA-Zá-ú0-9.Ññ ]+$" />
+                                        <f:validateLength minimum="3" maximum="25"/>
+                                    </p:inputText>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <!-- Ver Materias que da -->
+                        <p:column headerText="Materias que da" exportable="false" width="5%" style="font-size: smaller;text-align: center">
+                            <p:commandButton process="profesoresDT" update=":form:multiMateriaDetail" icon="ui-icon-search" style="height: 40px; color: #045491" 
+                                             actionListener="#{materiasManagedBean.obtenerMateriasProfesor(p.id)}" oncomplete="PF('multiMateriaDialog').show()"/>    
+                        </p:column>
+
+                        <!-- Ver Comisiones a cargo -->
+                        <p:column headerText="Comisiones a cargo" exportable="false" style="font-size: smaller;text-align: center">
+                            <p:commandButton process="profesoresDT" update=":form:multiComisionDetail" icon="fa fa-list fa-lg"  style="width: 35px; height: 35px; color: #045491;" 
+                                             actionListener="#{comisionesManagedBean.obtenerComisionesProfesor(p.id)}" oncomplete="PF('multiComisionDialog').show();PF('multiComisionDialog').initPosition();"/>
+                        </p:column>
+
+                        <!-- RowEdit -->
+                        <p:column headerText="Modificar" style="text-align: center;" exportable="false">
+                            <f:facet name="header"> 
+                                Modificar
+                                <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: #045491;"/>
+                            </f:facet>
+                            <p:rowEditor />
+                        </p:column>
+
+                        <!-- Deshabilitar/Habilitar -->
+                        <p:column headerText="Habilitar/Deshabilitar" sortBy="#{p.habilitado}" style="text-align: center;" exportable="false">
+                            <p:commandButton value="Habilitar/Deshabilitar" actionListener="#{profesoresManagedBean.habilitacionProfesor(p)}" icon="fa fa-ban" iconPos="right" style="color: red;height: 30px;" update=":form:message form"
+                                             oncomplete="PF('profesoresTable').clearFilters()" immediate="true"/>
+                            <f:facet name="header"> 
+                                <i class="fa fa-user fa-1x" aria-hidden="true" style="color: #045491;"/>
+                                Habilitar/Deshabilitar
+                                <span class="fa-stack fa-1x">
+                                    <i class="fa fa-user fa-stack-1x" style="color:#045491"></i>
+                                    <i class="fa fa-ban fa-stack-2x" style="color: red"></i>
+                                </span>
+                            </f:facet>
+                        </p:column>
+
+                        <f:facet name="footer" >
+                            En total hay #{profesoresManagedBean.profesores.size()} profesores.
+                        </f:facet>
+
+                    </p:dataTable>
+
+                    <br/>
+
+                    <!-- Ventana que muestra datos de la Cuenta -->
+                    <p:dialog header="Datos de la Cuenta" id="datosDetail" style="text-align:center;" widgetVar="datosDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+
+                        <p:panelGrid  columns="2" rendered="#{not empty profesoresManagedBean.profesorSeleccionado}">
+
+                            <h:outputText value="Habilitada:" />
+                            <h:graphicImage rendered="#{profesoresManagedBean.profesorSeleccionado.habilitado}" >
+                                <i class="fa fa-check-circle" title="Sí" style="color: #009933;"/>
+                            </h:graphicImage>
+                            <h:graphicImage rendered="#{!profesoresManagedBean.profesorSeleccionado.habilitado}" >
+                                <i class="fa fa-ban" title="No" style="color: #ff0000;"/>
+                            </h:graphicImage>
+
+                            <h:outputText value="ID Profesor" />
+                            <h:outputText value="#{profesoresManagedBean.profesorSeleccionado.id}" />
+
+                            <h:outputText value="E-mail:" />
+                            <h:outputText value="#{profesoresManagedBean.profesorSeleccionado.email}"/>
+
+                            <h:outputText value="Contraseña:" />
+                            <h:outputText value="#{profesoresManagedBean.profesorSeleccionado.password}" />
+
+                            <h:outputText value="Fecha de creación:" />
+                            <h:outputText value="#{profesoresManagedBean.profesorSeleccionado.fechaCreacion}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                            </h:outputText>
+
+                        </p:panelGrid>
+
+                    </p:dialog>
+
+                    <!-- Ventana que muestra Auditoría de la Cuenta -->
+                    <p:dialog header="Auditoría Cuenta" widgetVar="multiAuditoriaDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+                        <p:dataTable id="multiAuditoriaDetail" value="#{profesoresManagedBean.auditoriaProfesor}" var="ap"
+                                     style="font-weight: bold;" tableStyle="width:auto" emptyMessage="No se registró auditoría."
+                                     rows="10" paginator="true" paginatorAlwaysVisible="false"
+                                     currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15">
+
+                            <p:column headerText="N° Revisión" sortBy="#{ap.revision}" style="text-align: center">
+                                <h:outputText value="#{ap.revision}" />
+                            </p:column>
+                            <p:column headerText="Fecha de Revisión" sortBy="#{ap.revisionDate}" style="text-align: center">
+                                <h:outputText value="#{ap.revisionDate}" >
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Tipo de Revisión" sortBy="#{ap.revisionType}" style="text-align: center">
+                                <h:outputText value="#{ap.revisionType}" />
+                            </p:column>
+                            <p:column headerText="E-mail">
+                                <h:outputText value="#{ap.email}" />
+                            </p:column>
+                            <p:column headerText="Password">
+                                <h:outputText value="#{ap.password}" />
+                            </p:column>
+                            <p:column headerText="Habilitado" style="text-align: center">
+                                <h:outputText value="#{ap.habilitado?'Sí':'No'}" />
+                            </p:column>
+                            <p:column headerText="Nombre">
+                                <h:outputText value="#{ap.nombre}" />
+                            </p:column>
+                            <p:column headerText="Apellido">
+                                <h:outputText value="#{ap.apellido}" />
+                            </p:column>
+                            <p:column headerText="Fecha nacimiento">
+                                <h:outputText value="#{ap.fechaNacimiento}" >
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Sexo" style="text-align: center">
+                                <h:outputText value="#{ap.sexo}" />
+                            </p:column>
+                            <p:column headerText="DNI">
+                                <h:outputText value="#{ap.dni}" />
+                            </p:column>
+                            <p:column headerText="Teléfono">
+                                <h:outputText value="#{ap.telefono}" />
+                            </p:column>
+                            <p:column headerText="Celular">
+                                <h:outputText value="#{ap.celular}" />
+                            </p:column>
+                            <p:column headerText="Dirección">
+                                <h:outputText value="#{ap.direccion}" />
+                            </p:column>
+                            <p:column headerText="Localidad">
+                                <h:outputText value="#{ap.localidad.descripcion}" />
+                            </p:column>
+
+                        </p:dataTable>
+                    </p:dialog>
+
+                    <!-- Ventana que muestra Materias que da el Profesor -->
+                    <p:dialog header="Materias" id="multiMateriaDetail" widgetVar="multiMateriaDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="50%">
+
+                        <p:dataTable id="materiasProfesorDT" widgetVar="materiasProfesorTable" var="mp" value="#{materiasManagedBean.materiasProfesor}" emptyMessage="No se encontraron materias."
+                                     rowKey="#{mp.id}" editable="true" rows="5" paginator="true" tableStyle="width:auto"> 
+
+                            <!-- Eventos onRowEdit y onRowEditCancel -->
+                            <p:ajax event="rowEdit" listener="#{materiasManagedBean.materiaProfesorEdit}" update=":form:message" oncomplete="PF('materiasProfesorTable').clearFilters()"/>
+                            <p:ajax event="rowEditCancel" listener="#{materiasManagedBean.materiaProfesorCancel}" update=":form:message" />
+
+                            <p:column headerText="Nombre" filterBy="#{mp.materiaComision.nombre}" filterMatchMode="contains" sortBy="#{mp.materiaComision.nombre}">
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <h:outputText style="font-weight: bolder" value="#{mp.materiaComision.nombre}" />
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:selectOneMenu id="materias" value="#{mp.materiaComision}" label="Materias" converter="omnifaces.SelectItemsConverter" required="true"
+                                                         filter="true" filterMatchMode="contains" style="width: 88%">
+                                            <f:selectItems value="#{materiasManagedBean.materiasComision}" var="mc" itemLabel="#{mc.nombre}" itemValue="#{mc}"/>
+                                        </p:selectOneMenu>
+                                    </f:facet>
+                                </p:cellEditor>
+                            </p:column>
+
+                            <p:column headerText="Nota" sortBy="#{mp.nota}" style="text-align:center; font-weight: bolder;" width="5%">
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <h:outputText style="color: #045491" value="#{mp.nota}"/>
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputText value="#{mp.nota}" label="Nota" required="true" size="4" maxlength="4"> 
+                                            <f:validateDoubleRange minimum="0" maximum="10"/>
+                                            <f:validateLength minimum="1" maximum="4"/>
+                                        </p:inputText>
+                                    </f:facet>
+                                </p:cellEditor>
+                            </p:column>
+
+                            <!-- RowEdit -->
+                            <p:column headerText="Modificar" style="text-align: center;" exportable="false" width="3%">
+                                <p:rowEditor />
+                            </p:column>
+
+                            <!-- Eliminar Materia -->
+                            <p:column headerText="Eliminar" width="5%" exportable="false">
+                                <p:commandButton value="Dar de baja" actionListener="#{materiasManagedBean.bajaMateriaProfesor(mp)}" icon="fa fa-fw fa-trash" style="color: red" update=":form:message materiasProfesorDT" immediate="true">
+                                    <p:confirm header="Eliminar" message="¿Estás seguro?" icon="fa fa-fw fa-warning"/>
+                                </p:commandButton>
+                            </p:column>
+
+                        </p:dataTable>
+
+                        <br/>
+
+                        <!-- Nueva Materia de Profesor -->
+                        <p:panel id="horizontal" header="Agregar Materia" toggleable="true" toggleOrientation="horizontal" collapsed="true">
+                            <h:panelGrid columns="3">
+
+                                <h:outputLabel value="Nombre completo de la materia: " for="materia"/>
+                                <p:selectOneMenu id="materia" value="#{materiasManagedBean.materiaProfesor.materiaComision}" label="Materias" converter="omnifaces.SelectItemsConverter" required="true"
+                                                 filter="true" filterMatchMode="contains">
+                                    <f:selectItems value="#{materiasManagedBean.materiasComision}" var="mc" itemLabel="#{mc.nombre}" itemValue="#{mc}"/>
+                                </p:selectOneMenu>
+                                <p:message for="materia"/>
+
+                                <h:outputLabel value="Nota: " for="nota"/>
+                                <p:inputText id="nota" value="#{materiasManagedBean.materiaProfesor.nota}" label="Nota" required="true" size="4" maxlength="4"> 
+                                    <f:validateDoubleRange minimum="0" maximum="10"/>
+                                    <f:validateLength minimum="1" maximum="4"/>
+                                </p:inputText>
+                                <p:message for="nota"/>
+
+                                <p:commandButton value="Agregar materia" style="height: 40px; color: darkgreen" action="#{materiasManagedBean.altaMateriaProfesor()}" icon="fa fa-fw fa-save" update="materiasProfesorDT message">
+                                    <p:confirm header="Agregar" message="¿Estás seguro?" icon="fa fa-fw fa-warning" />
+                                </p:commandButton>
+
+                            </h:panelGrid>
+                        </p:panel>
+
+                    </p:dialog>
+
+                    <!-- Ventana que muestra comisiones a cargo del profesor -->
+                    <p:dialog header="Comisiones a cargo" widgetVar="multiComisionDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+                        <p:dataList id="multiComisionDetail" value="#{comisionesManagedBean.comisionesProfesor}" var="c" type="unordered" emptyMessage="No se encontraron comisiones."
+                                    style="font-weight: bold;">
+                            <p:link title="Ir" style="height: 40px; color: #045491" outcome="/admin/gestionComisiones.xhtml">
+                                <h:outputText value="Número: #{c.numero} - #{c.materiaComision.nombre} - #{c.dia} #{c.horario} - #{c.escuelaSede.nombre}"/>
+                                <f:param name="numero" value="#{c.numero}" />
+                            </p:link>
+                        </p:dataList>
+                    </p:dialog>
+
+                    <!-- Ventana para confirmar baja  -->
+                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                        <p:commandButton value="Sí" type="button" styleClass="ui-confirmdialog-yes" icon="fa fa-fw fa-check" />
+                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="fa fa-fw fa-close" />
+                    </p:confirmDialog>
+
+                    <!-- Mensaje con resultados -->
+                    <p:growl id="message" showDetail="true" />
+
+                </h:form>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

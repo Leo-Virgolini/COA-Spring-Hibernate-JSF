@@ -1,0 +1,132 @@
+
+#top {
+    position: relative;
+    color: white;
+    margin: 0px 0px 0px 0px;
+}
+
+#bottom {
+    background-color: #c2dfef;
+    padding: 5px;
+    margin: 0px 0px 0px 0px;
+}
+
+
+#left {
+    float: left;
+    background-color: #dddddd;
+    padding: 10px;
+    height: 465px;
+}
+
+#right {
+    float: right;
+    background-color: #ece3a5;
+    padding: 5px;
+    width: 150px;
+}
+
+
+.center_content {
+    position: relative;
+    background-color: #dddddd;
+    padding: 5px;
+}
+
+.ui-layout-container.center .ui-widget-content {
+    position: relative;
+    background-color: #dddddd;
+    padding: 5px;
+}
+
+
+.left_content {
+    background-color: #dddddd;
+    padding: 5px;
+    margin-left: 170px;
+}
+
+.right_content {
+    background-color: #dddddd;
+    padding: 5px;
+    margin: 0px 170px 0px 170px;
+}
+
+
+
+#top a:link, #top a:visited {
+    color: #045491;
+    font-weight : bold;
+    text-decoration: none;
+}
+
+#top a:link:hover, #top a:visited:hover  {
+    color: black;
+    font-weight : bold;
+    text-decoration : underline;
+}
+
+
+
+.presente {
+    font-weight: bold;
+    color: green;
+    text-align: center;
+}
+
+.ausente {
+    font-weight: bold;
+    color: red;
+    text-align: center;
+}
+
+
+.incompleta {
+    background-color: #045491;
+    color: brown;
+}
+
+
+.vacia {
+    background-color: #66ff66;
+    color: black;
+}
+
+.casivacia {
+    background-color: #99ff99;
+    color: black;
+}
+
+.casillena {
+    background-color: #ff6666;
+    color: black;
+}
+
+.llena {
+    background-color: #ff3333;
+    color: floralwhite;
+}
+
+
+.m {
+    background-color: #ccccff;
+}
+
+.f {
+    background-color: #ffcccc;
+}
+
+
+.confirmado {
+    background-color: #66ff66;
+}
+
+.sin_confirmar {
+    background-color: #ff9999;
+}
+
+
+.deshabilitado {
+    background-color: #cccccc;
+}
+

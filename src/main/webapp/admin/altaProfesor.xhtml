@@ -1,0 +1,175 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="/WEB-INF/layout/plantillaAdmin.xhtml">
+
+            <ui:define name="content">
+                
+                <h1>REGISTRO PROFESOR</h1>
+                <h:graphicImage name="registro.png" library="images" height="75" style="vertical-align: middle"/>
+                <h:outputText value="Completa con sus datos:" style="font-family: Impact, Charcoal, sans-serif; font-size: large"/>
+                <br/>
+
+                <h:form id="form">
+
+                    <p:fieldset legend="Datos de la Cuenta">
+
+                        <h:panelGrid id="cuenta" columns="3">
+
+                            <h:outputLabel value="E-mail: " for="email"/>
+                            <p:inputText id="email" label="E-mail" required="true" size="30" maxlength="30" requiredMessage="Ingresa tu e-mail." 
+                                         value="#{registerManagedBean.profesor.email}">
+                                <p:keyFilter regEx="/[a-z0-9_\.\-@]/i"/>
+                                <f:ajax event="blur" render="emailMsg" />
+                                <f:validateRegex pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                                <f:validateLength minimum="7" maximum="30" />
+                                <f:validator binding="#{uniqueEmailValidator}"/>
+                            </p:inputText>
+                            <p:message id="emailMsg" for="email"/>
+
+                            <h:outputLabel value="Contraseña: " for="pass"/>
+                            <p:password id="pass" label="Contraseña" feedback="true" promptLabel="Ingresa una contraseña" weakLabel="Poco segura" requiredMessage="Ingresa una contraseña." 
+                                        goodLabel="Segura" strongLabel="Muy segura" match="pass2" required="true" size="25" maxlength="25"
+                                        value="#{registerManagedBean.profesor.password}">
+                                <p:keyFilter regEx="/[a-zá-ú0-9 ñ]/i"/>
+                                <f:validateRegex pattern="^[a-zA-Zá-úñÑ 0-9]+$" />
+                                <f:validateLength minimum="6" maximum="25" />
+                            </p:password>
+                            <p:message for="pass"/>
+
+                            <h:outputLabel value="Vuelve a ingresar la contraseña: " for="pass2"/>
+                            <p:password id="pass2" label="Contraseña" required="true" size="25" maxlength="25" requiredMessage="Vuelve a ingresar la contraseña." validatorMessage="Vuelve a ingresar la contraseña correctamente."  
+                                        value="#{registerManagedBean.profesor.password}">
+                                <p:keyFilter regEx="/[a-zá-ú0-9 ñ]/i"/>
+                                <f:validateRegex pattern="^[a-zA-Zá-úñÑ 0-9]+$" />
+                                <f:validateLength minimum="6" maximum="25" />
+                            </p:password>
+                            <p:message for="pass2"/>
+
+                            <p:focus context="cuenta"/>
+
+                        </h:panelGrid>
+                    </p:fieldset>
+
+                    <br/>
+
+                    <p:fieldset legend="Datos Personales">
+
+                        <h:panelGrid id="profesor" columns="3">
+
+                            <h:outputLabel value="Nombres: " for="nombre"/>
+                            <p:inputText id="nombre" label="Nombres" required="true" size="30" maxlength="30" requiredMessage="Ingresa tu/s nombre/s." validatorMessage="Ingresa tu nombre correctamente."
+                                         value="#{registerManagedBean.profesor.nombre}">
+                                <p:keyFilter regEx="/[a-zá-ú ñ]/i"/>
+                                <f:validateRegex pattern="^[a-zA-Zá-úñÑ ]+$" />
+                                <f:validateLength minimum="2" maximum="30"/>
+                            </p:inputText>
+                            <p:message for="nombre"/>
+
+                            <h:outputLabel value="Apellido: " for="apellido"/>
+                            <p:inputText id="apellido" label="Apellido" required="true" size="30" maxlength="30" requiredMessage="Ingresa tu apellido." validatorMessage="Ingresa tu/s apellido/s correctamente."
+                                         value="#{registerManagedBean.profesor.apellido}">
+                                <p:keyFilter regEx="/[a-zá-ú ñ]/i"/>
+                                <f:validateRegex pattern="^[a-zA-Zá-úñÑ ]+$" />
+                                <f:validateLength minimum="2" maximum="30"/>
+                            </p:inputText>
+                            <p:message for="apellido"/>
+                            
+                            <h:outputLabel value="Sexo: " for="sexo"/>
+                            <p:selectOneRadio id="sexo" label="Sexo" required="true" requiredMessage="Selecciona sexo."
+                                              value="#{registerManagedBean.profesor.sexo}">
+                                <f:selectItem itemValue="M" itemLabel="Masculino" />
+                                <f:selectItem itemValue="F" itemLabel="Femenino" />
+                            </p:selectOneRadio>
+                            <p:message for="sexo"/>
+
+                            <h:outputLabel value="DNI: " for="dni"/>
+                            <p:inputText id="dni" label="Documento" required="true" size="8" maxlength="8" requiredMessage="Ingresa tu DNI." validatorMessage="Ingresa tu DNI correctamente."
+                                         value="#{registerManagedBean.profesor.dni}">
+                                <p:keyFilter regEx="/[0-9]/"/>
+                                <f:validateLongRange minimum="10000000" maximum="100000000"/>
+                                <f:validateRegex pattern="^[0-9]+$" />
+                                <f:validateLength minimum="8" maximum="8" />
+                                <f:validator binding="#{uniqueDniProfesorValidator}"/>
+                                <f:ajax event="blur" render="dniMsg"/>
+                            </p:inputText>
+                            <p:message id="dniMsg" for="dni"/>
+
+                            <h:outputLabel value="Fecha de nacimiento: " for="nacimiento"/>
+                            <p:calendar id="nacimiento" label="Fecha de Nacimiento" pattern="dd/MM/yyyy" mask="true" locale="es" pagedate="1/7/1980" mindate="1/1/1920" maxdate="31/12/1999" 
+                                        yearRange="c-70:c+19" showOn="button" navigator="true" size="10" required="true" requiredMessage="Ingresa la fecha de nacimiento."
+                                        value="#{registerManagedBean.profesor.fechaNacimiento}">
+                                <p:keyFilter regEx="/[0-9]/"/>
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                <f:validateLength minimum="10"/>
+                                <f:validator validatorId="birthDateValidator"/>
+                            </p:calendar>
+                            <p:message for="nacimiento"/>
+
+                            <h:outputLabel value="Teléfono: " for="telefono"/>
+                            <p:inputText id="telefono" label="Teléfono" required="true" size="8" maxlength="8" requiredMessage="Ingresa tu número de teléfono." validatorMessage="Ingresa tu teléfono correctamente."
+                                         value="#{registerManagedBean.profesor.telefono}">
+                                <p:keyFilter regEx="/[0-9]/"/>
+                                <f:validateRegex pattern="^[0-9]+$" />
+                                <f:validateLength minimum="8" />
+                            </p:inputText>
+                            <p:message for="telefono"/>
+
+                            <h:outputLabel value="Celular: " for="celular"/>
+                            <p:inputMask id="celular" label="Celular" mask="(999)159999-9999" required="true" size="16" maxlength="16" requiredMessage="Ingresa tu número de celular." validatorMessage="Ingresa tu celular correctamente."
+                                         value="#{registerManagedBean.profesor.celular}">
+                                <p:keyFilter regEx="/[0-9]/"/>
+                                <f:validateLength minimum="16"/>
+                            </p:inputMask>
+                            <p:message for="celular"/>
+
+                            <h:outputLabel value="Localidad: " for="localidad"/>
+                            <p:selectOneMenu id="localidad" label="Localidad" required="true" value="#{registerManagedBean.profesor.localidad}" converter="omnifaces.SelectItemsConverter" requiredMessage="Selecciona tu localidad." filter="true" filterMatchMode="contains" >
+                                <f:selectItem itemLabel="Selecciona localidad" itemValue=""/>
+                                <f:selectItems value="#{localidadesManagedBean.localidadesBsAs}" var="l" itemLabel="#{l.descripcion}, #{l.distrito.descripcion}" itemValue="#{l}"/>
+                            </p:selectOneMenu>
+                            <p:message for="localidad"/>
+
+                            <h:outputLabel value="Dirección: " for="direccion"/>
+                            <p:inputText id="direccion" label="Dirección" required="true" size="25" maxlength="25" requiredMessage="Ingresa tu dirección." validatorMessage="Ingresa tu dirección correctamente."
+                                         value="#{registerManagedBean.profesor.direccion}">
+                                <f:validateRegex pattern="^[a-zA-Zá-ú0-9.Ññ ]+$" />
+                                <f:validateLength minimum="2" maximum="25"/>
+                            </p:inputText>
+                            <p:message for="direccion"/>
+
+                            <h:outputLabel value="Qué materias da:" for="materias"/>                          
+                            <p:selectCheckboxMenu  id="materias" value="#{registerManagedBean.materiasComision}" label="Materias" converter="omnifaces.SelectItemsConverter" 
+                                                   required="true" requiredMessage="Selecciona alguna materia."
+                                                   multiple="true" filter="true" filterMatchMode="contains" panelStyle="width:500px" style="width: 140px; height: 25px; font-size: 15px;">
+                                <f:selectItems value="#{materiasManagedBean.materiasComision}" var="m" itemLabel="#{m.nombre}" itemValue="#{m}" />
+                            </p:selectCheckboxMenu>
+                            <p:message for="materias"/>
+
+    
+                        </h:panelGrid>
+
+                    </p:fieldset>
+
+                    <br/>
+
+                    <p:commandButton id="confirmar" value="Confirmar" update="form message" action="#{registerManagedBean.registrarProfesor()}" icon="ui-icon-disk"/>
+
+                    <!-- Mensaje con resultados -->
+                    <p:growl id="message" showDetail="true" globalOnly="true"/>
+
+                </h:form>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

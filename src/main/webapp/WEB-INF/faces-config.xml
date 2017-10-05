@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<faces-config version="2.2"
+              xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
+    
+    <application>
+        
+        <el-resolver>
+            org.springframework.web.jsf.el.SpringBeanFacesELResolver
+        </el-resolver>
+        
+        <el-resolver>
+            org.primefaces.application.exceptionhandler.PrimeExceptionHandlerELResolver
+        </el-resolver>     
+        
+        <message-bundle>
+            MyMessage
+        </message-bundle>
+
+    </application>
+    
+<!--    <factory>
+        <exception-handler-factory>
+            org.primefaces.application.exceptionhandler.PrimeExceptionHandlerFactory
+        </exception-handler-factory>
+    </factory>-->
+    
+    <!--Exception handling-->
+    <factory>
+        <exception-handler-factory>org.omnifaces.exceptionhandler.FullAjaxExceptionHandlerFactory</exception-handler-factory>
+    </factory>
+    
+
+    
+<!--    <navigation-rule>
+
+        <from-view-id>/login.xhtml</from-view-id>
+
+        <navigation-case>
+            <from-outcome>/alumno/homeAlumno.xhtml?faces-redirect=true</from-outcome>
+
+            <if>#{indexBean.registered}</if>
+
+            <to-view-id>/alumno/homeAlumno.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>success</from-outcome>
+
+            <if>#{!indexBean.registered}</if>
+
+            <to-view-id>/login.xhtml</to-view-id>
+        </navigation-case>
+        
+    </navigation-rule>-->
+    
+    
+<!--    <navigation-rule>
+            
+        <from-view-id>/login.xhtml</from-view-id>
+            
+        <navigation-case>
+            <to-view-id>#{loginManagedBean.autenticar}</to-view-id>
+        </navigation-case>
+
+    </navigation-rule>-->
+
+
+    
+</faces-config>

@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <body>
+
+        <ui:composition template="/WEB-INF/layout/plantillaAdmin.xhtml">
+
+            <ui:define name="content">
+
+                <h:form id="form">
+
+                    <!-- DataTable muestra todas las materias -->
+                    <p:dataTable id="materiasDT" value="#{materiasManagedBean.materiasComision}" var="m" widgetVar="materiasTable" emptyMessage="No se encontraron materias con ese criterio."
+                                 filteredValue="#{materiasManagedBean.materiasFiltradas}" editable="true" rowKey="#{m.id}"
+                                 rows="10" tableStyle="width:auto"
+                                 paginator="true" paginatorAlwaysVisible="false"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="5,10,15">
+
+                        <!-- Buscador General -->
+                        <f:facet name="header">   
+                            <h1>Materias de Comisión</h1>           
+                            <h:outputText value="Buscar " />
+                            <p:inputText id="globalFilter" onkeyup="PF('materiasTable').filter()" style="width:150px" placeholder="Ingresa palabras clave"/> 
+                            <!-- Exporter: WORD -->                
+                            <h:commandLink>
+                                <p:graphicImage name="/images/excel3.png" width="40" style="vertical-align: middle;display: inline-block;"/>
+                                <p:dataExporter type="xls" target="materiasDT" fileName="MateriasComisión"/>
+                            </h:commandLink>                   
+                        </f:facet>
+
+                        <!-- Eventos onRowEdit y onRowEditCancel -->
+                        <p:ajax event="rowEdit" listener="#{materiasManagedBean.onRowEdit}" update=":form:message" oncomplete="PF('materiasTable').clearFilters()"/>
+                        <p:ajax event="rowEditCancel" listener="#{materiasManagedBean.onRowCancel}" update=":form:message" />
+
+                        <!-- Columnas -->
+                        <p:column headerText="ID" width="5%" sortBy="#{m.id}">
+                            <h:outputText value="#{m.id}" />
+                        </p:column>
+
+                        <p:column headerText="Nombre" filterBy="#{m.nombre}" filterMatchMode="contains" sortBy="#{m.nombre}">                           
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{m.nombre}"/></f:facet>
+                                <f:facet name="input"><p:inputText value="#{m.nombre}" style="width:99%"/></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <br/>
+
+                        <!-- RowEdit -->
+                        <p:column headerText="Modificar" width="5%" style=";text-align: center;" exportable="false">
+                            <p:rowEditor/>
+                        </p:column>
+
+                        <p:column headerText="Eliminar" width="8%" exportable="false">
+                            <p:commandButton value="Dar de baja" actionListener="#{materiasManagedBean.bajaMateriaComision(m)}" style="color: red" icon="ui-icon-trash" update=":form:message form" 
+                                             oncomplete="PF('materiasTable').clearFilters()">
+                                <p:confirm header="Eliminar" message="¿Estás seguro?" icon="ui-icon-alert" />
+                            </p:commandButton>
+                        </p:column>
+
+                        <f:facet name="footer" >
+                            En total hay #{materiasManagedBean.materiasComision.size()} materias disponibles.
+                        </f:facet>
+
+                    </p:dataTable>
+
+                    <br/>
+
+                    <!-- Ventana para confirmar baja de materia -->
+                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                        <p:commandButton value="Sí" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                    </p:confirmDialog>
+
+                    <!-- Mensaje con resultados -->
+                    <p:growl id="message" showDetail="true" />
+
+                </h:form>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

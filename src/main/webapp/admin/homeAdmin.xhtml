@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="/WEB-INF/layout/plantillaAdmin.xhtml">
+
+            <ui:define name="content">
+
+                <h1>Bienvenido Administrador</h1>
+                <f:metadata>
+                    <f:viewAction action="#{sessionManagedBean.onLoad}"/>
+                </f:metadata>
+
+                <p:messages autoUpdate="true" style="display:inline-block;"/>
+                <p:growl/><br/>
+
+                <h:outputLabel value="E-mail: #{sessionManagedBean.usuario.email}"/> <br/>
+                <h:graphicImage library="images" name="admin2.jpg" width="500px" />
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

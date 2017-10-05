@@ -1,0 +1,163 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <body>
+
+        <ui:composition template="/WEB-INF/layout/plantillaAdmin.xhtml">
+
+            <ui:define name="content">
+
+                <h:form id="form">
+
+                    <!-- DataTable muestra todas las escuelas sede -->
+                    <p:dataTable id="escuelasDT" var="e" value="#{escuelasManagedBean.escuelasSede}" widgetVar="escuelasTable" emptyMessage="No se encontraron escuelas con ese criterio."
+                                 filteredValue="#{escuelasManagedBean.escuelasFiltradas}" editable="true" rowKey="#{e.id}" tableStyle="width:auto" rowStyleClass="#{(e.habilitado eq false) ? 'deshabilitado':null}"> 
+
+                        <!-- Buscador General -->
+                        <f:facet name="header">   
+                            <h1>Escuelas Sede</h1>           
+                            <h:outputText value="Buscar "/>
+                            <p:inputText id="globalFilter" onkeyup="PF('escuelasTable').filter()" style="width:150px" placeholder="Ingresa palabras clave"/>               
+                            <!-- Exporter: WORD -->                                          
+                            <h:commandLink>
+                                <p:graphicImage name="/images/excel3.png" width="40" style="vertical-align: middle;display: inline-block;"/>
+                                <p:dataExporter type="xls" target="escuelasDT" fileName="EscuelasSede"/>
+                            </h:commandLink>                   
+                        </f:facet>
+
+                        <!-- Eventos onRowEdit y onRowEditCancel -->
+                        <p:ajax event="rowEdit" listener="#{escuelasManagedBean.modificarEscuelaSede}" update=":form:message" oncomplete="PF('escuelasTable').clearFilters()"/>
+                        <p:ajax event="rowEditCancel" listener="#{escuelasManagedBean.cancelarModificarEscuelaSede}" update=":form:message" />
+
+                        <!-- Columnas -->
+
+                        <!-- Ver datos de la cuenta -->
+                        <p:column headerText="Datos Cuenta" exportable="false" style="width: 5%;text-align: center">
+                            <f:facet name="header"> 
+                                Datos Cuenta
+                                <i class="fa fa-user-circle" style="color: #045491;"/>
+                            </f:facet>
+                            <p:commandButton process="escuelasDT" update=":form:datosDetail" icon="fa fa-search" style="height: 40px; color: #045491" 
+                                             oncomplete="PF('datosDialog').show()">
+                                <f:setPropertyActionListener value="#{e}" target="#{escuelasManagedBean.escuelaSede}" />
+                            </p:commandButton>
+                        </p:column>
+
+                        <p:column headerText="Nombre" filterBy="#{e.nombre}" filterMatchMode="contains" sortBy="#{e.nombre}">                           
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{e.nombre}" /></f:facet>
+                                <f:facet name="input"><p:inputText value="#{e.nombre}" style="width:100%"/></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Localidad, Distrito" filterBy="#{e.localidad.descripcion}, #{e.localidad.distrito.descripcion}" filterMatchMode="contains" sortBy="#{e.localidad.descripcion}, #{e.localidad.distrito.descripcion}">
+                            <p:cellEditor>     
+                                <f:facet name="output"><h:outputText value="#{e.localidad.descripcion}, #{e.localidad.distrito.descripcion}" /></f:facet>
+                                <f:facet name="input">
+                                    <p:selectOneMenu value="#{e.localidad.id}" converterMessage="El valor seleccionado es incorrecto." style="width:90%" filter="true" filterMatchMode="contains">
+                                        <f:selectItems value="#{localidadesManagedBean.localidadesBsAs}" var="l" itemLabel="#{l.descripcion}, #{l.distrito.descripcion}" itemValue="#{l.id}" />
+                                    </p:selectOneMenu>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Dirección">
+                            <p:cellEditor>     
+                                <f:facet name="output"><h:outputText value="#{e.direccion}" /></f:facet>
+                                <f:facet name="input"><p:inputText value="#{e.direccion}" style="width:100%"/></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Teléfono">
+                            <f:facet name="header">
+                                Teléfono
+                                <i class="fa fa-phone-square" style="color: #045491;"/>
+                            </f:facet>
+                            <p:cellEditor>     
+                                <f:facet name="output"><h:outputText value="#{e.telefono}" /></f:facet>
+                                <f:facet name="input"><p:inputText value="#{e.telefono}" style="width:100%"/></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <br/>
+
+                        <!-- RowEdit -->
+                        <p:column headerText="Modificar" width="5%" style="text-align: center;" exportable="false">
+                            <f:facet name="header"> 
+                                Modificar
+                                <i class="fa fa-pencil-square-o" style="color: #045491;"/>
+                            </f:facet>
+                            <p:rowEditor/>
+                        </p:column>
+
+                        <!-- Deshabilitar/Habilitar -->
+                        <p:column headerText="Habilitar/Deshabilitar" sortBy="#{e.habilitado}" width="10%" style="text-align: center;" exportable="false">
+                            <f:facet name="header"> 
+                                <f:facet name="header"> 
+                                    <i class="fa fa-user fa-1x" aria-hidden="true" style="color: #045491;"/>
+                                    Habilitar/Deshabilitar
+                                    <span class="fa-stack fa-1x">
+                                        <i class="fa fa-user fa-stack-1x" style="color:#045491"></i>
+                                        <i class="fa fa-ban fa-stack-2x" style="color: red"></i>
+                                    </span>
+                                </f:facet>
+                            </f:facet>
+                            <p:commandButton value="Habilitar/Deshabilitar" actionListener="#{escuelasManagedBean.habilitacionEscuelaSede(e)}" icon="fa fa-fw fa-ban" iconPos="right" style="color: red;height: 30px;" update=":form:message form"
+                                             oncomplete="PF('escuelasTable').clearFilters()" immediate="true"/>
+                        </p:column>
+
+                        <f:facet name="footer" >
+                            En total hay #{escuelasManagedBean.escuelasSede.size()} escuelas sede disponibles.
+                        </f:facet>
+
+                    </p:dataTable>
+
+                    <br/>
+
+                    <!-- Ventana que muestra datos de la Cuenta -->
+                    <p:dialog header="Datos de la Cuenta" widgetVar="datosDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+                        <p:outputPanel id="datosDetail" style="text-align:center;">
+                            <p:panelGrid  columns="2" rendered="#{not empty escuelasManagedBean.escuelaSede}">
+
+                                <h:outputText value="Habilitada:" />
+                                <h:graphicImage rendered="#{escuelasManagedBean.escuelaSede.habilitado}" >
+                                    <i class="fa fa-check-circle" title="Sí" style="color: #009933;"/>
+                                </h:graphicImage>
+                                <h:graphicImage rendered="#{!escuelasManagedBean.escuelaSede.habilitado}" >
+                                    <i class="fa fa-ban" title="No" style="color: #ff0000;"/>
+                                </h:graphicImage>
+
+                                <h:outputText value="ID Login:" />
+                                <h:outputText value="#{escuelasManagedBean.escuelaSede.id}" />
+
+                                <h:outputText value="E-mail:" />
+                                <h:outputText value="#{escuelasManagedBean.escuelaSede.email}"/>
+
+                                <h:outputText value="Contraseña:" />
+                                <h:outputText value="#{escuelasManagedBean.escuelaSede.password}" />
+
+                                <h:outputText value="Fecha de creación:" />
+                                <h:outputText value="#{escuelasManagedBean.escuelaSede.fechaCreacion}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                                </h:outputText>
+
+                            </p:panelGrid>
+                        </p:outputPanel>
+                    </p:dialog>
+
+                    <!-- Mensaje con resultados -->
+                    <p:growl id="message" showDetail="true" />
+
+                </h:form>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

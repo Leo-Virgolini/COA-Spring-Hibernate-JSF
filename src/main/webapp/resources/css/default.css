@@ -1,0 +1,144 @@
+/* Small screens (default) */
+html { font-size: 100%; }
+
+/* Medium screens (640px) */
+@media (min-width: 40rem) { 
+
+    html { font-size: 112%; }  
+}
+
+/* Large screens (1024px) */
+@media (min-width: 64rem) { 
+    html { font-size: 120%; }
+}
+
+
+body {
+    font-size: 12px;
+    font-family: Verdana, "Verdana CE",  Arial, "Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
+    margin: 10px;                
+    background-image: url("#{resource['images/bgcontrol.jpg']}");
+}
+
+h1 {
+    transition: .5s; 
+    -moz-transition: .5s; 
+    -webkit-transition: .5s; 
+    -o-transition: .5s; 
+    font-family: 'Vollkorn', 'Muli', sans-serif; 
+    border-bottom: 1px solid #AFAFAF;
+    font-size: 35px;
+    line-height: 50px;
+    font-weight: bold;
+    margin: 0px;
+    padding: 0px;
+    color: #045491;
+    font-weight: 700; 
+    margin: 0 0 24px;
+}
+
+label {
+    font-weight: bold;
+}
+
+a:link, a:visited {
+    color: #045491;
+    font-weight : bold;
+    text-decoration: none;
+}
+
+a:link:hover, a:visited:hover  {
+    color: #045491;
+    font-weight : bold;
+    text-decoration : underline;
+}
+
+.alinizq {
+    text-align: left;
+}
+
+.alinder {
+    text-align: right;
+}
+
+.centrado {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+select {
+    display: inline-block;
+    float: left;
+}
+
+.text {
+    font-weight: bolder;
+    font-size: 30px;
+}
+
+.center {
+    text-align: center;
+}
+
+
+.ui-datatable td {
+    font-family: 'Arvo','Open Sans','Droid Sans';
+    font-weight: bolder;
+}
+
+/*p message*/
+.ui-messages, .ui-message {
+    display: inline-block;
+}
+
+/*Datatable's empty message*/
+.ui-datatable-empty-message {
+    font-style: italic;
+    font-weight: normal;
+    font-family: arial;
+}
+
+/*SelectOneMenu's Filter's Width*/
+.ui-selectonemenu-filter-container {
+    width: 97%;
+}
+
+/*p:dialog's borde redondeado*/
+.ui-dialog {
+    border-radius: 7px;
+}
+
+
+/*InputText in column*/
+/* {
+    width: 99%; 
+    box-sizing: border-box;
+}*/
+
+
+/*Font Awesome: sacar redondeo*/
+.fa {
+    overflow: visible !important;
+}
+
+/*p AjaxStatus: transparente*/
+.transparent {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/*buttons en p:confirmDialog centrados*/
+.ui-dialog-buttonpane {
+    padding-left: 1em !important;
+    padding-right: 1em !important;
+}
+
+.ui-confirmdialog-no {
+    margin-right: 0px !important;
+}
+
+/*p:layout*/
+/*.ui-widget-content {
+    background-color: #dddddd;
+}*/

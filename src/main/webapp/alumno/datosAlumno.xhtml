@@ -1,0 +1,157 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <body>
+
+        <ui:composition template="/WEB-INF/layout/plantillaAlumno.xhtml">
+
+            <ui:define name="content">
+
+                <h:form id="form">
+
+                    <h1>Mis Datos Personales</h1> <br/>
+
+                    <h:panelGrid id="alumno" columns="3" cellpadding="5">
+
+                        <h:outputLabel value="Nombre/s: "/>
+                        <h:outputText id="nombre" value="#{sessionManagedBean.alumno.nombre}"/>
+                        <p:message for="nombre"/>
+
+                        <h:outputLabel value="Apellidos/s: "/>
+                        <h:outputText id="apellido" value="#{sessionManagedBean.alumno.apellido}"/>
+                        <p:message for="apellido"/>
+
+                        <h:outputLabel value="E-mail: "/>
+                        <h:outputText id="email" value="#{sessionManagedBean.alumno.email}"/>
+                        <p:message for="email"/>
+
+                        <h:outputLabel value="Contraseña: " for="pass"/>
+                        <p:inplace>
+                            <p:password id="pass" label="Contraseña" feedback="true" promptLabel="Ingrese una contraseña" weakLabel="Poco segura" requiredMessage="Ingresa una contraseña." 
+                                        goodLabel="Segura" strongLabel="Muy segura" match="pass2" required="true" size="25" maxlength="25"
+                                        value="#{sessionManagedBean.alumno.password}">
+                                <f:validateRegex pattern="^[a-zA-Z0-9]+$" />
+                                <f:validateLength minimum="6" maximum="25" />
+                            </p:password>
+                        </p:inplace>
+                        <p:message for="pass"/>
+
+                        <h:outputLabel value="Vuelve a ingresar la contraseña: " for="pass2"/>
+                        <p:password id="pass2" label="Contraseña" required="true" size="25" maxlength="25" requiredMessage="Vuelve a ingresar la contraseña." validatorMessage="Vuelve a ingresar la contraseña correctamente."  
+                                    value="#{sessionManagedBean.alumno.password}">
+                            <f:validateRegex pattern="^[a-zA-Z0-9]+$" />
+                            <f:validateLength minimum="6" maximum="25" />
+                        </p:password>
+                        <p:message for="pass2"/>
+
+                        <h:outputLabel value="Sexo: "/>
+                        <h:outputText id="sexo" value="#{sessionManagedBean.alumno.sexo}" style="width:100%"/>
+                        <p:message for="sexo"/>
+
+                        <h:outputLabel value="DNI: "/>
+                        <h:outputText id="dni" value="#{sessionManagedBean.alumno.dni}"/>
+                        <p:message for="dni"/>
+
+                        <h:outputLabel value="Fecha de nacimiento: "/>
+                        <h:outputText id="nacimiento" value="#{sessionManagedBean.alumno.fechaNacimiento}" style="width:100%">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                        <p:message for="nacimiento"/>
+
+                        <h:outputLabel value="Teléfono: "/>
+                        <p:inplace>
+                            <p:inputText id="telefono" value="#{sessionManagedBean.alumno.telefono}" required="true" size="8" maxlength="8" requiredMessage="Ingresa tu número de teléfono." validatorMessage="Ingresa tu teléfono correctamente.">
+                                <f:validateRegex pattern="^[0-9]+$" />
+                                <f:validateLength minimum="8" />
+                            </p:inputText>
+                        </p:inplace>
+                        <p:message for="telefono"/>
+
+                        <h:outputLabel value="Celular: "/>
+                        <p:inplace>
+                            <p:inputMask id="celular" value="#{sessionManagedBean.alumno.celular}" mask="(999)159999-9999" required="true" size="16" maxlength="16" requiredMessage="Ingresa tu número de celular." validatorMessage="Ingresa tu celular correctamente.">
+                                <f:validateRegex pattern="^[0-9)(-]+$" />
+                                <f:validateLength minimum="16"/>
+                            </p:inputMask>
+                        </p:inplace>
+                        <p:message for="celular"/>
+                        
+                        <h:outputLabel value="Localidad, Distrito: "/>
+                        <h:outputText id="localidad" value="#{sessionManagedBean.alumno.localidad.descripcion}, #{sessionManagedBean.alumno.localidad.distrito.descripcion}" />
+                        <p:message for="localidad"/>
+
+                        <h:outputLabel value="Dirección: "/>
+                        <p:inplace>
+                            <p:inputText id="direccion" value="#{sessionManagedBean.alumno.direccion}" required="true" size="25" maxlength="25" requiredMessage="Ingresa tu dirección." validatorMessage="Ingresa tu dirección correctamente.">
+                                <f:validateRegex pattern="^[a-zA-Z0-9.ñ ]+$" />
+                                <f:validateLength minimum="3" maximum="25"/>
+                            </p:inputText>
+                        </p:inplace>
+                        <p:message for="direccion"/>
+
+                        <h:outputLabel value="Actualmente trabaja: " for="trabaja"/>
+                        <p:selectBooleanCheckbox id="trabaja" value="#{sessionManagedBean.alumno.trabaja}"/>
+                        <p:message for="trabaja"/>
+
+                        <h:outputLabel value="Escuela de origen: "/>
+                        <h:outputText id="escuela" value="#{sessionManagedBean.alumno.escuelaOrigen.nombre}"/>
+                        <p:message for="escuela"/>
+
+                        <h:outputLabel value="Número de resolución: "/>
+                        <p:inplace>
+                            <p:inputText id="resolucion" value="#{sessionManagedBean.alumno.resolucion}" required="true" size="15" maxlength="15" requiredMessage="Ingresa el número de resolución que está en la constancia." validatorMessage="Ingresa tu número de resolución correctamente.">
+                                <f:validateRegex pattern="^[0-9-/ ]+$" />
+                                <f:validateLength minimum="4" maximum="15" />
+                            </p:inputText>
+                        </p:inplace>
+                        <p:message for="resolucion"/>
+
+                        <h:outputLabel value="Modalidad: "/>
+                        <p:inplace>
+                            <p:inputText id="modalidad" value="#{sessionManagedBean.alumno.modalidad}" required="true" size="20" maxlength="20" requiredMessage="Ingresa la modalidad." validatorMessage="Ingresa tu modalidad correctamente.">  
+                                <f:validateRegex pattern="^[a-zA-Z. ]+$" />
+                                <f:validateLength minimum="5" maximum="20" />
+                            </p:inputText>
+                        </p:inplace>
+                        <p:message for="modalidad"/>
+
+                        <h:outputLabel value="Localidad Escuela: "/>
+                        <h:outputText id="localidadEscuela" value="#{sessionManagedBean.alumno.localidad.descripcion}"/>
+                        <p:message for="localidadEscuela"/>
+
+                    </h:panelGrid>
+
+                    <br/><br/>
+
+                    <p:commandButton id="modificar" value="Modificar" update="alumno" action="#{alumnosManagedBean.modificarmeAlumno(sessionManagedBean.alumno)}" 
+                                     style="width:120px; height:60px; margin-left: 25px;" icon="ui-icon-check"/>
+
+                    <br/><br/><br/>
+
+                    <!-- Ventana que muestra comisiones inscriptas -->
+                    <p:dialog header="Comisiones Inscriptas" widgetVar="multiComisionDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+                        <p:outputPanel id="multiComisionDetail">
+                            <ul>
+                                <ui:repeat value="#{comisionesManagedBean.comisionesAlumno}" var="c">
+                                    <li><h:outputText value="Número Comisión: #{c.numero} - Materia: #{c.materiaComision.nombre} - Día: #{c.dia} - Horario: #{c.horario} - Escuela: #{c.escuelaSede.nombre}" style="display:block"/></li>
+                                </ui:repeat>
+                            </ul>
+                        </p:outputPanel>
+                    </p:dialog>
+
+                    <!-- Mensaje con resultados -->
+                    <p:growl id="message" showDetail="true" />
+
+                </h:form>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

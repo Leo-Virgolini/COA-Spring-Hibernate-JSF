@@ -1,0 +1,160 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="/WEB-INF/layout/plantillaAdmin.xhtml">
+
+            <ui:define name="content">
+
+                <h:form id="form">
+
+                    <p:fieldset legend="Datos de la Comisión">
+
+                        <h:panelGrid id="comision" columns="3">
+
+                            <h:outputLabel value="Materia: " for="materia"/>
+                            <p:selectOneMenu id="materia" label="Materia" required="true" value="#{comisionesManagedBean.comision.materiaComision}" filter="true" filterMatchMode="contains"
+                                             converter="omnifaces.SelectItemsConverter" requiredMessage="Selecciona una materia.">
+                                <f:selectItem itemLabel="---------------------------------------- Selecciona Materia -----------------------------------------" itemValue=""/>
+                                <f:selectItems value="#{materiasManagedBean.materiasComision}" var="m" itemLabel="#{m.nombre}" itemValue="#{m}"/>                    
+                            </p:selectOneMenu>
+                            <p:message for="materia"/>
+
+                            <h:outputLabel value="Día: " for="dia"/>
+                            <p:selectOneMenu id="dia" label="Día" required="true" value="#{comisionesManagedBean.comision.dia}" requiredMessage="Selecciona el día.">
+                                <f:selectItem itemLabel="-- Selecciona Día --" noSelectionOption="true"/>
+                                <f:selectItem itemLabel="LUNES" itemValue="LUNES"/>
+                                <f:selectItem itemLabel="MARTES" itemValue="MARTES"/>
+                                <f:selectItem itemLabel="MIERCOLES" itemValue="MIERCOLES"/>
+                                <f:selectItem itemLabel="JUEVES" itemValue="JUEVES"/>
+                                <f:selectItem itemLabel="VIERNES" itemValue="VIERNES"/>
+                                <f:selectItem itemLabel="SÁBADO" itemValue="SÁBADO"/>
+                                <p:ajax event="change" update="@this" />
+                            </p:selectOneMenu>
+                            <p:message for="dia"/>
+
+                            <h:outputLabel value="Horario: " for="horario"/>
+                            <p:inputMask id="horario" label="Horario" required="true" mask="99:99-99:99" size="11" maxlength="11" requiredMessage="Ingresa el horario."
+                                         value="#{comisionesManagedBean.comision.horario}">
+                                <f:attribute name="idProfesor" value="#{comisionesManagedBean.comision.profesor.id}"/>  
+                                <f:attribute name="dia" value="#{comisionesManagedBean.comision.dia}"/>  
+                                <f:validator binding="#{horariosValidator}"/>
+                                <f:validateRegex pattern="^[0-9:-]+$" />
+                                <f:validateLength minimum="11" />
+                            </p:inputMask>
+                            <p:message for="horario"/>
+
+                            <h:outputLabel value="Escuela: " for="escuela"/>
+                            <p:selectOneMenu id="escuela" label="Escuela" required="true" value="#{comisionesManagedBean.comision.escuelaSede.id}" requiredMessage="Selecciona la escuela.">
+                                <f:selectItem itemLabel="Selecciona Escuela" itemValue=""/>
+                                <f:selectItems value="#{escuelasManagedBean.escuelasSede}" var="e" itemLabel="#{e.nombre}" itemValue="#{e.id}"/>                    
+                            </p:selectOneMenu>
+                            <p:message for="escuela"/>
+
+                            <h:outputLabel value="Profesor: " for="profesor"/>
+                            <p:selectOneMenu id="profesor" label="Profesor" required="true" value="#{comisionesManagedBean.comision.profesor.id}" requiredMessage="Selecciona el profesor.">
+                                <f:selectItem itemLabel="Selecciona Profesor" itemValue=""/>
+                                <f:selectItems value="#{profesoresManagedBean.profesores}" var="p" itemLabel="#{p.apellido}, #{p.nombre}" itemValue="#{p.id}"/>
+                                <p:ajax event="change" update="materiasProfesorDT" listener="#{materiasManagedBean.obtenerMateriasProfesor(comisionesManagedBean.comision.profesor.id)}"/>
+                            </p:selectOneMenu>
+                            <p:message for="profesor"/>
+
+                            <p:focus context="comision"/>
+
+                        </h:panelGrid>
+
+                        <h:outputLabel value="Materias que da: " for="materiasProfesorDT"/>
+                        <p:dataTable id="materiasProfesorDT" var="mp" value="#{materiasManagedBean.materiasProfesor}" widgetVar="materiasProfesorTable" emptyMessage="No se encontraron materias."
+                                     rowKey="#{mp.id}" scrollable="true" scrollHeight="#{materiasManagedBean.materiasProfesor.size()>0?'100':'25'}" style="width: 30%;"> 
+
+                            <!-- Columnas -->
+                            <p:column headerText="Nombre" sortBy="#{mp.materiaComision.nombre}" width="90%">
+                                <h:outputText style="font-weight: bolder" value="#{mp.materiaComision.nombre}" />
+                            </p:column>
+
+                            <p:column headerText="Nota" sortBy="#{mp.nota}" style="text-align:center">
+                                <h:outputText style="color: #3300cc;font-weight: bolder" value="#{mp.nota}" />
+                            </p:column>
+
+                        </p:dataTable>
+
+                    </p:fieldset>
+
+                    <br/>
+
+                    <p:commandButton id="confirmar" value="Confirmar" update="form comisionesDT" action="#{comisionesManagedBean.altaComision()}" icon="fa fa-fw fa-save"/>
+                    <br/><br/>
+
+                    <!-- Mensaje con resultados -->
+                    <p:growl id="message" showDetail="true" globalOnly="true"/>
+
+                </h:form>
+
+                <p:separator/>
+
+                <!-- DataTable muestra todas las comisiones -->
+                <p:dataTable id="comisionesDT" var="c" value="#{comisionesManagedBean.comisiones}" widgetVar="comisionesTable" emptyMessage="No se encontraron comisiones con ese criterio."
+                             filteredValue="#{comisionesManagedBean.comisionesFiltradas}" editable="true" rowKey="#{c.numero}" rowStyleClass="#{(c.cantidad >= 30)? 'llena':null}"
+                             rows="10"
+                             paginator="true"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="5,10,15">
+
+                    <!-- Buscador General -->
+                    <f:facet name="header">   
+                        <h1>Comisiones</h1> <br/>             
+                        <h:outputText value="Buscar: " />
+                        <p:inputText id="globalFilter" onkeyup="PF('comisionesTable').filter()" style="width:150px" placeholder="Ingresa palabras clave"/> 
+                    </f:facet>
+
+                    <!-- Columnas -->
+                    <p:column headerText="Número de comisión" style="text-align:center" width="5%" filterStyle="width: 24px" filterMaxLength="3" filterBy="#{c.numero}" filterMatchMode="contains" sortBy="#{c.numero}">
+                        <h:outputText value="#{c.numero}" />
+                    </p:column>
+
+                    <p:column headerText="Materia" width="30%" filterBy="#{c.materiaComision.nombre}" filterMatchMode="contains" sortBy="#{c.materiaComision.nombre}">                   
+                        <h:outputText value="#{c.materiaComision.nombre}" />
+                    </p:column>                      
+
+                    <p:column headerText="Día" width="10%" filterBy="#{c.dia}" filterMatchMode="contains" sortBy="#{c.dia}">                            
+                        <h:outputText value="#{c.dia}" />
+                    </p:column>
+
+                    <p:column headerText="Horario" width="10%" filterBy="#{c.horario}" filterMatchMode="contains">  
+                        <h:outputText value="#{c.horario}" />
+                    </p:column>
+
+                    <p:column headerText="Escuela Sede" width="15%" filterBy="#{c.escuelaSede.nombre}" filterMatchMode="contains" sortBy="#{c.escuelaSede.nombre}">   
+                        <h:outputText value="#{c.escuelaSede.nombre}" />
+                    </p:column>
+
+                    <p:column headerText="ID Profesor" style="text-align:center" width="5%" filterStyle="width: 24px" filterMaxLength="3" filterBy="#{c.profesor.id}" filterMatchMode="contains" sortBy="#{c.profesor.id}">      
+                        <h:outputText value="#{c.profesor.id}" />
+                    </p:column>
+
+                    <p:column headerText="Apellido y Nombre Profesor" width="15%" filterBy="#{c.profesor.apellido}, #{c.profesor.nombre}" filterMatchMode="contains" sortBy="#{c.profesor.apellido}, #{c.profesor.nombre}">   
+                        <h:outputText value="#{c.profesor.apellido}, #{c.profesor.nombre}" />
+                    </p:column>
+
+                    <p:column headerText="Cantidad de inscriptos" style="text-align:center" width="5%" filterStyle="width: 16px" filterMaxLength="2" filterBy="#{c.cantidad}" filterMatchMode="contains" sortBy="#{c.cantidad}">   
+                        <h:outputText value="#{c.cantidad}" />
+                    </p:column>
+
+                    <f:facet name="footer" >
+                        En total hay #{comisionesManagedBean.comisiones.size()} comisiones disponibles.
+                    </f:facet>
+
+                </p:dataTable>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

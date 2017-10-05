@@ -1,0 +1,179 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+    <body>
+
+        <ui:composition template="/WEB-INF/layout/plantillaAlumno.xhtml">
+
+            <ui:define name="content">
+
+                <h:form id="form">        
+
+                    <!-- SELECTONEMENU con las materias que debe. actualiza la datatable con las comisiones -->
+                    <h:outputLabel value="Materias que adeudas: " for="materias"/>
+                    <p:selectOneMenu id="materias" label="Materias" required="true" value="#{materiasManagedBean.materiaAlumno}" converter="omnifaces.SelectItemsConverter" requiredMessage="Selecciona una materia.">
+                        <f:selectItem itemLabel="Selecciona materia" itemValue=""/>                  
+                        <f:selectItems value="#{materiasManagedBean.materiasAlumno}" var="m" itemLabel="#{m.materiaComision.nombre} #{m.anio}°" itemValue="#{m}"/>
+                        <p:ajax event="change" update="comisionesDT" listener="#{comisionesManagedBean.obtenerComisionesMateria(materiasManagedBean.materiaAlumno.materiaComision.id)}"/>
+                    </p:selectOneMenu>
+                    <p:message for="materias"/>
+
+                    <br/><br/><br/>
+
+                    <!-- DataTable muestra las comisiones a las que se puede inscribir(dependiendo de las materias que adeude) -->
+                    <p:dataTable id="comisionesDT" var="c" value="#{comisionesManagedBean.comisiones}" widgetVar="comisionesAltaTable" emptyMessage="No se encontraron comisiones con ese criterio."
+                                 filteredValue="#{comisionesManagedBean.comisionesFiltradas}" selection="#{comisionesManagedBean.comisionSeleccionada}" rowKey="#{c.numero}">
+
+                        <!-- Buscador General -->
+                        <f:facet name="header">   
+                            <h1>Comisiones Disponibles</h1>                 
+                            <h:outputText value="Buscar: "/>
+                            <p:inputText id="globalFilter" onkeyup="PF('comisionesAltaTable').filter()" style="width:150px" placeholder="Ingresa palabras clave"/> 
+                        </f:facet>
+
+                        <!-- Checkbox -->
+                        <p:column selectionMode="single" style="width:16px;text-align:center"/>
+
+                        <!-- Columnas -->
+                        <p:column headerText="Número de comision" style="text-align:center" filterBy="#{c.numero}" width="5%" filterStyle="width: 24px" filterMaxLength="3" filterMatchMode="contains" sortBy="#{c.numero}">
+                            <h:outputText value="#{c.numero}" />
+                        </p:column>
+
+                        <p:column headerText="Nombre de Materia Comisión">
+                            <h:outputText value="#{c.materiaComision.nombre}" />
+                        </p:column>
+
+                        <p:column headerText="Dia" filterBy="#{c.dia}" style="width: 15%" filterMatchMode="contains" sortBy="#{c.dia}">
+                            <f:facet name="filter">
+                                <p:selectOneMenu onchange="PF('comisionesAltaTable').filter()" >
+                                    <f:selectItem itemLabel="----- TODOS -----" itemValue="#{null}" noSelectionOption="true" />                                    
+                                    <f:selectItem itemLabel="LUNES" itemValue="LUNES"/>
+                                    <f:selectItem itemLabel="MARTES" itemValue="MARTES"/>
+                                    <f:selectItem itemLabel="MIERCOLES" itemValue="MIERCOLES"/>
+                                    <f:selectItem itemLabel="JUEVES" itemValue="JUEVES"/>
+                                    <f:selectItem itemLabel="VIERNES" itemValue="VIERNES"/>
+                                    <f:selectItem itemLabel="SABADO" itemValue="SABADO"/>
+                                </p:selectOneMenu>
+                            </f:facet>
+                            <h:outputText value="#{c.dia}" />
+                        </p:column>
+
+                        <p:column headerText="Horario" filterBy="#{c.horario}" style="width: 10%" filterMatchMode="contains" sortBy="#{c.horario}">
+                            <h:outputText value="#{c.horario} hrs." />
+                        </p:column>
+
+                        <!-- Ver fechas de las comisiones -->
+                        <p:column headerText="Calendario" exportable="false" style="width: 8%; text-align: center">
+                            <p:commandButton process="comisionesDT" update=":form:multiCalendarioDetail" icon="ui-icon-calendar" value="Ver fechas" style="height: 40px; color: #045491" 
+                                             actionListener="#{scheduleView.obtenerFecha(c)}" oncomplete="PF('multiCalendarioDialog').show()"/>
+                        </p:column>
+
+                        <p:column headerText="Escuela" filterBy="#{c.escuelaSede.nombre}" filterMatchMode="contains" sortBy="#{c.escuelaSede.nombre}">
+                            <h:outputText value="#{c.escuelaSede.nombre}" />
+                        </p:column>
+
+                        <p:column headerText="Localidad" filterBy="#{c.escuelaSede.localidad.descripcion}" filterMatchMode="contains" sortBy="#{c.escuelaSede.localidad.descripcion}">
+                            <h:outputText value="#{c.escuelaSede.localidad.descripcion}" />
+                        </p:column>
+
+                        <p:column headerText="Dirección" filterBy="#{c.escuelaSede.direccion}" filterMatchMode="contains" sortBy="#{c.escuelaSede.direccion}">
+                            <h:outputText value="#{c.escuelaSede.direccion}" />
+                        </p:column>
+
+                        <f:facet name="footer">
+                            En total hay #{fn:length(comisionesManagedBean.comisiones)} comision/es disponible/s.
+                            <br/>
+                        </f:facet>
+
+                    </p:dataTable>
+
+                    <br/><br/>
+
+                    <br/>
+
+                    <!-- Button para confirmar inscripcion a comision seleccionada -->
+                    <p:commandButton value="Inscribirse a comisión seleccionada" style="height: 40px; color: darkgreen" action="#{comisionesManagedBean.altaComisionAlmuno(materiasManagedBean.materiaAlumno)}" icon="ui-icon-disk"
+                                     update="form">
+                        <p:confirm header="Confirmación" message="¿Estás seguro?" icon="ui-icon-alert" />
+                    </p:commandButton>
+
+                    <!-- Ventana para confirmar inscripcion a comision seleccionada -->
+                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                        <p:commandButton value="Sí" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                    </p:confirmDialog>
+
+                    <br/><br/>
+
+                    <!-- Button para ver comisiones inscriptas. En el update= va la ruta al outputPanel -->
+                    <p:commandButton process="comisionesDT" update=":form:multiComisionDetail" icon="ui-icon-search" value="Ver comisiones inscriptas" style="height: 40px; color: #045491" oncomplete="PF('multiComisionDialog').show()"/>
+
+                    <!-- Ventana que muestra comisiones inscriptas -->
+                    <p:dialog header="Comisiones Inscriptas" widgetVar="multiComisionDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+                        <p:outputPanel id="multiComisionDetail">
+                            <ui:repeat value="#{comisionesManagedBean.obtenerComisionesInscriptas(sessionManagedBean.alumno.id)}" var="c">
+                                <h:outputText value="Número Comisión: #{c.numero} - Materia: #{c.materiaComision.nombre} - Escuela: #{c.escuelaSede.nombre}" style="display:block"/>
+                            </ui:repeat>
+                        </p:outputPanel>
+                    </p:dialog>
+
+                    <!-- Ventana que muestra calendario(p:schedule) de una comision -->
+                    <p:dialog header="Calendario" widgetVar="multiCalendarioDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" position="center" height="500px">
+                        <p:outputPanel id="multiCalendarioDetail">
+                            <p:schedule id="scheduleLocale" style="width: 500px" value="#{scheduleView.eventModel}" locale="es" rightHeaderTemplate="" 
+                                        timeZone="GMT-3" clientTimeZone="local" initialDate="#{scheduleView.inicioClases().time}">
+                                <p:ajax event="eventSelect" listener="#{scheduleView.onEventSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();" />
+                            </p:schedule>
+                        </p:outputPanel>
+                    </p:dialog>
+
+                    <!-- Ventana que muestra eventos del calendario al hacer click -->
+                    <p:dialog widgetVar="eventDialog" header="Detalles" showEffect="clip" hideEffect="clip" resizable="false">
+                        <h:panelGrid id="eventDetails" columns="2">    
+                            <p:outputLabel for="comision" value="Datos:" />
+                            <p:outputLabel id="comision" value="#{scheduleView.event.title}"/>
+
+                            <p:outputLabel for="desde" value="Horario desde:" />
+                            <p:outputLabel id="desde" value="#{scheduleView.event.startDate}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                            </p:outputLabel>
+
+                            <p:outputLabel for="hasta" value="Horario hasta:" />
+                            <p:outputLabel id="hasta" value="#{scheduleView.event.endDate}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                            </p:outputLabel>
+                        </h:panelGrid>
+                    </p:dialog> 
+
+                    <!-- Mensaje con resultados -->
+                    <p:growl id="message" showDetail="true" autoUpdate="true" globalOnly="true"/>
+
+                </h:form>
+
+
+                <p style="font-family: sans-serif; font-size: 20px; color: brown; text-shadow: 1px 1px 8px black; ">
+                    Luego de la inscripción deberás llevar a la sede COA los siguientes papeles:<br/>
+                    -La constancia original de las materias que adeudas de tu colegio.<br/>
+                    -1 fotocopia por cada materia a la que te inscribiste.<br/>
+                    -1 fotocopia del DNI por cada materia a la que te inscribiste.<br/><br/>
+
+                    <u>Ejemplo:</u><br/>
+                    Si te anotaste para 3 materias deberás traer:<br/>
+                    -La constancia original.<br/>
+                    -3 fotocopias de la constancia.<br/>
+                    -3 fotocopias del DNI.<br/> 
+                </p>
+
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

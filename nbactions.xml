@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+        <action>
+            <actionName>CUSTOM-mvn dependency:sources</actionName>
+            <displayName>mvn dependency:sources</displayName>
+            <goals>
+                <goal>dependency:sources</goal>
+            </goals>
+        </action>
+        <action>
+            <actionName>CUSTOM-mvn dependency:resolve -Dclassifier=javadoc</actionName>
+            <displayName>mvn dependency:resolve -Dclassifier=javadoc</displayName>
+            <goals>
+                <goal>dependency:resolve</goal>
+                <goal>-Dclassifier=javadoc</goal>
+            </goals>
+        </action>
+        <action>
+            <actionName>CUSTOM-mvn clean:install</actionName>
+            <displayName>mvn clean:install</displayName>
+            <goals>
+                <goal>mvn</goal>
+                <goal>clean:install</goal>
+            </goals>
+        </action>
+        <action>
+            <actionName>CUSTOM-mvn dependency:tree</actionName>
+            <displayName>mvn dependency:tree</displayName>
+            <goals>
+                <goal>dependency:tree</goal>
+                
+            </goals>
+        </action>
+        
+    </actions>

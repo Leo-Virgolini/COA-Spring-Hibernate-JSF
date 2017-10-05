@@ -1,0 +1,149 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="/WEB-INF/layout/plantillaAlumno.xhtml">
+
+            <ui:define name="content">
+
+                <h:form id="form">
+
+                    <!-- DataTable muestra las comisiones inscriptas del alumno -->
+                    <p:dataTable id="comisionesDT" var="c" value="#{comisionesManagedBean.comisionesAlumno}" widgetVar="comisionesTable" emptyMessage="No se encontraron comisiones con ese criterio."
+                                 filteredValue="#{comisionesManagedBean.comisionesFiltradas}" rowKey="#{c.numero}" >
+
+                        <!-- Buscador General -->
+                        <f:facet name="header">   
+                            <h1>Comisiones</h1> <br/>             
+                            <h:outputText value="Buscar " />
+                            <p:inputText id="globalFilter" onkeyup="PF('comisionesTable').filter()" style="width:150px" placeholder="Ingresa palabras clave"/> 
+                        </f:facet>
+
+                        <!-- Columnas -->
+                        <p:column headerText="Datos" exportable="false" style="width:56px">
+                            <p:rowToggler />
+                        </p:column>
+
+                        <p:column headerText="Número de comision" style="text-align:center" width="5%" filterStyle="width: 24px" filterMaxLength="3" filterBy="#{c.numero}" filterMatchMode="contains" sortBy="#{c.numero}">
+                            <h:outputText value="#{c.numero}" />
+                        </p:column>
+
+                        <p:column headerText="Materia" width="25%" filterBy="#{c.materiaComision.nombre}" filterMatchMode="contains" sortBy="#{c.materiaComision.nombre}">             
+                            <h:outputText value="#{c.materiaComision.nombre}" />
+                        </p:column> 
+
+                        <p:column headerText="Dia" width="15%" sortBy="#{c.dia}">                             
+                            <h:outputText value="#{c.dia}" />
+                        </p:column>
+
+                        <p:column headerText="Horario" width="15%">   
+                            <h:outputText value="#{c.horario} hrs." />
+                        </p:column>
+
+                        <p:column headerText="Escuela" width="15%" sortBy="#{c.escuelaSede.nombre}"> 
+                            <h:outputText value="#{c.escuelaSede.nombre}" />
+                        </p:column>
+
+                        <!-- Ver listado de los Alumnos -->
+                        <p:rowExpansion>
+                            <p:dataTable var="ma" value="#{materiasManagedBean.obtenerAsistenciaAlumno(c.numero, sessionManagedBean.getAlumno().getId())}">
+
+                                <p:columnGroup type="header">
+                                    <p:row>
+                                        <p:column headerText="Nombre materia" colspan="1" rowspan="2" />
+                                        <p:column headerText="Año" colspan="1" rowspan="2" />
+                                        <p:column headerText="Asistencia" colspan="8" />
+                                        <p:column headerText="Nota" colspan="1" rowspan="2" />
+                                    </p:row>
+                                    <p:row>
+                                        <p:column headerText="Clase 1" colspan="1"/>
+                                        <p:column headerText="Clase 2" colspan="1"/>
+                                        <p:column headerText="Clase 3" colspan="1"/>
+                                        <p:column headerText="Clase 4" colspan="1"/>
+                                        <p:column headerText="Clase 5" colspan="1"/>
+                                        <p:column headerText="Clase 6" colspan="1"/>
+                                        <p:column headerText="Clase 7" colspan="1"/>
+                                        <p:column headerText="Clase 8" colspan="1"/>
+                                    </p:row>
+                                </p:columnGroup>
+
+                                <p:column>
+                                    <h:outputText value="#{ma.materiaComision.nombre}" />
+                                </p:column>
+
+                                <p:column style="text-align: center;">
+                                    <h:outputText value="#{ma.anio}"/>
+                                </p:column>
+
+                                <p:column styleClass="#{(ma.asistencia1)?'presente':'ausente'}">
+                                    <h:outputText value="#{ma.asistencia1?'P':'A'}" />
+                                </p:column>
+
+                                <p:column styleClass="#{(ma.asistencia2)?'presente':'ausente'}">
+                                    <h:outputText value="#{ma.asistencia2?'P':'A'}" />
+                                </p:column>
+
+                                <p:column styleClass="#{(ma.asistencia3)?'presente':'ausente'}">
+                                    <h:outputText value="#{ma.asistencia3?'P':'A'}" />
+                                </p:column>
+
+                                <p:column styleClass="#{(ma.asistencia4)?'presente':'ausente'}">
+                                    <h:outputText value="#{ma.asistencia4?'P':'A'}" />
+                                </p:column>
+
+                                <p:column styleClass="#{(ma.asistencia5)?'presente':'ausente'}">
+                                    <h:outputText value="#{ma.asistencia5?'P':'A'}" />
+                                </p:column>
+
+                                <p:column styleClass="#{(ma.asistencia6)?'presente':'ausente'}">
+                                    <h:outputText value="#{ma.asistencia6?'P':'A'}" />
+                                </p:column>
+
+                                <p:column styleClass="#{(ma.asistencia7)?'presente':'ausente'}">
+                                    <h:outputText value="#{ma.asistencia7?'P':'A'}" />
+                                </p:column>
+
+                                <p:column styleClass="#{(ma.asistencia8)?'presente':'ausente'}">
+                                    <h:outputText value="#{ma.asistencia8?'P':'A'}" />
+                                </p:column>
+
+                                <p:column style="text-align: center;">
+                                    <h:outputText value="#{ma.nota}"/>
+                                </p:column>
+
+                            </p:dataTable>
+                        </p:rowExpansion>
+
+                        <f:facet name="footer" >
+                            Estás inscripto en #{comisionesManagedBean.comisionesAlumno.size()} comision/es.
+                        </f:facet>
+
+                    </p:dataTable>
+
+                    <br/>
+
+                    <!-- Exporter: necesita la libreria Apache poi. Para evitar columnas no deseadas:exportable="false" -->
+                    <p:fieldset legend="Exportar a Excel" style="width: 80px">    
+                        <h:commandLink>
+                            <p:graphicImage name="/images/excel.jpg" width="80"/>
+                            <p:dataExporter type="xls" target="comisionesDT" fileName="comisiones"/>
+                        </h:commandLink>   
+                    </p:fieldset>
+
+                    <!-- Mensaje con resultados -->
+                    <p:growl id="message" showDetail="true" />
+
+                </h:form>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

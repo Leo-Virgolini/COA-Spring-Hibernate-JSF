@@ -1,0 +1,144 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="/WEB-INF/layout/plantillaAdmin.xhtml">
+
+            <ui:define name="content">
+
+                <h:form id="form">
+
+                    <p:fieldset legend="Datos de la Cuenta">
+
+                        <h:panelGrid id="cuenta" columns="3">
+
+                            <h:outputLabel value="E-mail: " for="email"/>
+                            <p:inputText id="email" label="E-mail" required="true" size="30" maxlength="30" requiredMessage="Ingresa el e-mail." 
+                                         value="#{escuelasManagedBean.escuelaSede.email}">
+                                <f:validateRegex pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                                <f:validateLength minimum="7" maximum="30" />
+                                <f:validator binding="#{uniqueEmailValidator}"/>
+                                <f:ajax event="blur" render="emailMsg"/>
+                            </p:inputText>
+                            <p:message id="emailMsg" for="email"/>
+
+                            <h:outputLabel value="Contraseña: " for="pass"/>
+                            <p:password id="pass" label="Contraseña" feedback="true" promptLabel="Ingrese una contraseña" weakLabel="Poco segura" requiredMessage="Ingresa una contraseña." 
+                                        goodLabel="Segura" strongLabel="Muy segura" match="pass2" required="true" size="25" maxlength="25"
+                                        value="#{escuelasManagedBean.escuelaSede.password}">
+                                <f:validateRegex pattern="^[a-zA-Z0-9]+$" />
+                                <f:validateLength minimum="6" maximum="25" />
+                            </p:password>
+                            <p:message for="pass"/>
+
+                            <h:outputLabel value="Vuelve a ingresar la contraseña: " for="pass2"/>
+                            <p:password id="pass2" label="Contraseña" required="true" size="25" maxlength="25" requiredMessage="Vuelve a ingresar la contraseña." validatorMessage="Vuelve a ingresar la contraseña correctamente."  
+                                        value="#{escuelasManagedBean.escuelaSede.password}">
+                                <f:validateRegex pattern="^[a-zA-Z0-9]+$" />
+                                <f:validateLength minimum="6" maximum="25" />
+                            </p:password>
+                            <p:message for="pass2"/>
+
+                            <p:focus context="cuenta"/>
+
+                        </h:panelGrid>
+                    </p:fieldset>
+                    
+                    <br/>
+
+                    <p:fieldset legend="Datos de la Escuela Sede">
+
+                        <h:panelGrid id="escuela" columns="3">
+
+                            <h:outputLabel value="Nombre: " for="nombre"/>
+                            <p:inputText id="nombre" label="Nombre" required="true" size="30" maxlength="30" requiredMessage="Ingresa el nombre de la escuela sede." validatorMessage="Ingresa la escuela correctamente."
+                                         value="#{escuelasManagedBean.escuelaSede.nombre}">
+                                <f:validateRegex pattern="^[a-zA-Z0-9á-ú°ñ ]+$" />
+                                <f:validateLength minimum="3" maximum="30" />
+                            </p:inputText>
+                            <p:message for="nombre"/>
+
+                            <h:outputLabel value="Localidad: " for="localidad"/>
+                            <p:selectOneMenu id="localidad" label="Localidad" required="true" value="#{escuelasManagedBean.escuelaSede.localidad}" converter="omnifaces.SelectItemsConverter"  requiredMessage="Selecciona la localidad." filter="true" filterMatchMode="contains">
+                                <f:selectItem itemLabel="Selecciona Localidad" itemValue=""/>
+                                <f:selectItems value="#{localidadesManagedBean.localidadesBsAs}" var="l" itemLabel="#{l.descripcion}, #{l.distrito.descripcion}" itemValue="#{l}"/>                    
+                            </p:selectOneMenu>
+                            <p:message for="localidad"/>
+
+                            <h:outputLabel value="Dirección: " for="direccion"/>
+                            <p:inputText id="direccion" label="Dirección" required="true" size="25" maxlength="25" requiredMessage="Ingresa tu dirección." validatorMessage="Ingresa tu dirección correctamente."
+                                         value="#{escuelasManagedBean.escuelaSede.direccion}">
+                                <f:validateRegex pattern="^[a-zA-Z0-9.ñ ]+$" />
+                                <f:validateLength minimum="3" maximum="25"/>
+                            </p:inputText>
+                            <p:message for="direccion"/>
+
+                            <h:outputLabel value="Teléfono: " for="telefono"/>
+                            <p:inputText id="telefono" label="Teléfono" required="true" size="8" maxlength="8" requiredMessage="Ingresa el número de teléfono." validatorMessage="Ingresa el teléfono correctamente."
+                                         value="#{escuelasManagedBean.escuelaSede.telefono}">
+                                <f:validateRegex pattern="^[0-9]+$" />
+                                <f:validateLength minimum="8" />
+                            </p:inputText>
+                            <p:message for="telefono"/>
+
+                            <p:focus context="escuela"/>
+                        </h:panelGrid>
+
+                    </p:fieldset>
+
+                    <br/>
+
+                    <p:commandButton id="confirmar" value="Confirmar" update="form escuelasDT" action="#{escuelasManagedBean.altaEscuelaSede()}" icon="fa fa-fw fa-save"/>
+                    <br/><br/>
+
+                    <!-- Mensaje con resultados -->
+                    <p:growl id="message" showDetail="true" globalOnly="true"/>
+
+                </h:form>
+
+                <p:separator/>
+
+                <!-- DataTable muestra las escuelas sede -->
+                <p:dataTable id="escuelasDT" var="e" value="#{escuelasManagedBean.escuelasSede}" widgetVar="escuelasTable" emptyMessage="No se encontraron escuelas sede con ese criterio."
+                             rowKey="#{e.id}" style="width:75%;">
+
+                    <f:facet name="header">   
+                        <h1>Escuelas Sede</h1> <br/>                   
+                    </f:facet>
+
+                    <!-- Columnas -->
+                    <p:column headerText="Nombre" sortBy="#{e.nombre}" width="70%">
+                        <h:outputText style="font-weight: bolder" value="#{e.nombre}" />
+                    </p:column>
+
+                    <p:column headerText="Localidad" sortBy="#{e.localidad.descripcion}" style="text-align:center; font-weight: bolder;" width="10%">
+                        <h:outputText value="#{e.localidad.descripcion}" />
+                    </p:column>
+
+                    <p:column headerText="Dirección" sortBy="#{e.direccion}" style="text-align:center; font-weight: bolder;" width="10%">
+                        <h:outputText value="#{e.direccion}" />
+                    </p:column>
+
+                    <p:column headerText="Teléfono" sortBy="#{e.telefono}" style="text-align:center; font-weight: bolder;" width="10%">
+                        <h:outputText value="#{e.telefono}" />
+                    </p:column>
+
+                    <f:facet name="footer" >
+                        #{escuelasManagedBean.obtenerEscuelasSede().size()} escuela/s sede.
+                        <br/>
+                    </f:facet>
+
+                </p:dataTable>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

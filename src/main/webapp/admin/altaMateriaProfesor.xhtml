@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="/WEB-INF/layout/plantillaAdmin.xhtml">
+
+            <ui:define name="content">
+
+                <h:form id="form">
+                    
+                    <h1>Registrar Materias del Profesor</h1>
+                    
+                    <br/>
+
+                    <h:outputLabel value="Profesor: " for="profesor"/>
+                    <p:selectOneMenu id="profesor" label="Profesor" required="true" value="#{profesoresManagedBean.profesor.id}" requiredMessage="Selecciona el profesor.">
+                        <f:selectItem itemLabel="Selecciona Profesor" itemValue=""/>
+                        <f:selectItems value="#{profesoresManagedBean.profesores}" var="p" itemLabel="#{p.apellido}, #{p.nombre}" itemValue="#{p.id}"/>
+                        <p:ajax event="change" update="materiasProfesorDT" listener="#{materiasManagedBean.obtenerMateriasProfesor(profesoresManagedBean.profesor.id)}"/>
+                    </p:selectOneMenu>
+                    <p:message for="profesor"/>
+
+                    <br/><br/>
+
+                    <p:fieldset legend="Ingrese nombre de la Materia">
+
+                        <h:panelGrid columns="3">
+
+                            <h:outputLabel value="Nombre completo de la materia: " for="materia"/>
+                            <p:selectOneMenu id="materia" value="#{materiasManagedBean.materiaProfesor.materiaComision}" label="Materias" converter="omnifaces.SelectItemsConverter" required="true"
+                                             filter="true" filterMatchMode="contains">
+                                <f:selectItems value="#{materiasManagedBean.materiasComision}" var="mc" itemLabel="#{mc.nombre}" itemValue="#{mc}"/>
+                            </p:selectOneMenu>
+                            <p:message for="materia"/>
+
+                            <h:outputLabel value="Nota: " for="nota"/>
+                            <p:inputText id="nota" value="#{materiasManagedBean.materiaProfesor.nota}" label="Nota" size="4" maxlength="4"> 
+                                <f:validateDoubleRange minimum="0" maximum="10"/>
+                                <f:validateLength minimum="1" maximum="4"/>
+                            </p:inputText>
+                            <p:message for="nota"/>
+
+                        </h:panelGrid>
+                    </p:fieldset>
+
+                    <br/>
+
+                    <p:commandButton value="Agregar materia" style="height: 40px; color: darkgreen" action="#{materiasManagedBean.altaMateriaProfesor()}" icon="ui-icon-disk" update="materiasProfesorDT message form"/>
+
+                    <br/><br/>
+                    
+                    <p:separator/>
+
+                    <!-- DataTable muestra las materias del profesor -->
+                    <p:dataTable id="materiasProfesorDT" var="mp" value="#{materiasManagedBean.materiasProfesor}" widgetVar="materiasProfesorTable" emptyMessage="No se encontraron materias."
+                                 rowKey="#{mp.id}" style="width:50%;" scrollable="true">
+
+                        <f:facet name="header">   
+                            <h1>Materias del Profesor</h1> <br/>                   
+                        </f:facet>
+
+                        <!-- Columnas -->
+                        <p:column headerText="Nombre" sortBy="#{mp.materiaComision.nombre}" width="70%">
+                            <h:outputText style="font-weight: bolder" value="#{mp.materiaComision.nombre}" />
+                        </p:column>
+
+                        <p:column headerText="Nota" sortBy="#{mp.nota}" style="text-align:center; font-weight: bolder;" width="10%">
+                            <h:outputText value="#{mp.nota}" />
+                        </p:column>
+
+                        <f:facet name="footer" >
+                            #{materiasManagedBean.materiasProfesor.size()} materia/s.
+                            <br/>
+                        </f:facet>
+
+                    </p:dataTable>
+
+                    <!-- Mensaje con resultados -->
+                    <p:growl id="message" showDetail="true" globalOnly="true"/>
+
+                </h:form>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

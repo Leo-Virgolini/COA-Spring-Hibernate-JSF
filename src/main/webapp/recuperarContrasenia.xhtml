@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="/WEB-INF/layout/plantillaLogin.xhtml">
+
+            <ui:define name="top">
+
+            </ui:define>
+
+            <ui:define name="content">
+
+                <h1>RECUPERAR CONTRASEÑA</h1>
+
+                <h:form>
+
+                    <h:panelGrid id="grid" columns="4" cellpadding="5">
+
+                        <h:graphicImage name="password2.png" library="images" width="35" style="vertical-align: middle; display: inline-block;float: right"/>
+
+                        <h:outputLabel value="Ingrese E-mail: " for="email"/>
+                        <p:inputText id="email" value="#{loginManagedBean.usuario.email}" required="true" label="E-mail" placeholder="E-mail" size="30" maxlength="30" requiredMessage="Ingresa tu e-mail." validatorMessage="Ingresa un email correcto.">
+                            <i class="fa fa-envelope-o" 
+                               style="color: #0071B7;padding: 6px 12px;
+                               font-size: 14px;
+                               font-weight: normal;
+                               line-height: 1;
+                               color: #555;
+                               text-align: center;
+                               background-color: #eee;
+                               border: 1px solid #ccc;
+                               border-radius: 4px;"/>
+                            <f:validateRegex pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                            <f:validateLength minimum="7" maximum="30" />
+                        </p:inputText>
+                        <p:message for="email"/>
+
+                    </h:panelGrid>
+
+                    <p:messages autoUpdate="true" globalOnly="true"/>
+                    <p:focus context="grid"/>
+                    <p:growl globalOnly="true"/>
+
+                    <br/>
+
+                    <p:captcha id="captcha" label="Verificar" language="es" requiredMessage="Realiza la verificación."/>
+                    <p:message for="captcha"/>
+
+                    <br/><br/>
+
+                    <p:commandButton id="recuperar" value="Recuperar contraseña" action="#{loginManagedBean.recuperarContraseña()}" update="@form"
+                                     style="width:120px; height:50px; margin-left: 10px;" icon="fa fa-fw fa-envelope-square"/>
+
+                </h:form>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

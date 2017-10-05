@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <body>
+
+        <ui:composition template="/WEB-INF/layout/plantillaAlumno.xhtml">
+
+            <ui:define name="content">
+
+                <p:messages autoUpdate="true" style="display:inline-block;"/>
+                <p:growl showDetail="true" globalOnly="true"/>
+                
+                <h1>Bienvenido Alumno: <h:outputLabel value="#{sessionManagedBean.alumno.apellido}, #{sessionManagedBean.alumno.nombre}"/></h1>
+                <h:outputLabel value="E-mail: #{sessionManagedBean.alumno.email}"/> <br/><br/>
+                
+                <p title="Pasos" style="color: #3300cc; font-family: sans-serif;font-size: large">
+                    <u>Pasos a seguir:</u><br/>
+                    1- Ir a "Inscribirse a Materias" y ingresar todas las materias que adeudes.<br/>
+                    2- Ir a "Inscribirse a Comisiones" y registrarte a las comisiones según tus materias.<br/> 
+                </p>
+                
+                <h:graphicImage library="images" name="learn.png" width="250"/>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

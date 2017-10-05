@@ -1,0 +1,27 @@
+/*css de errorpages*/
+
+body {
+    font-size: 16px;
+    font-family: Verdana, "Verdana CE",  Arial, "Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
+    margin: 10px;                
+    background-image: url("#{resource['images/blue2.jpg']}");
+    color: white;
+}
+
+h1 {
+    transition: .5s; 
+    -moz-transition: .5s; 
+    -webkit-transition: .5s; 
+    -o-transition: .5s; 
+    font-family: 'Vollkorn', 'Muli', sans-serif; 
+    border-bottom: 1px solid #AFAFAF;
+    font-size: 40px;
+    line-height: 50px;
+    font-weight: bold;
+    margin: 0px;
+    padding: 0px;
+    color: #0099ff;
+    font-weight: 700; 
+    margin: 0 0 24px;
+    text-align: center;
+}

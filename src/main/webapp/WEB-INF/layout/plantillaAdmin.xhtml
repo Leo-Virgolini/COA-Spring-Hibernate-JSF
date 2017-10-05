@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <h:outputStylesheet library="css" name="normalize.css"/>
+        <h:outputStylesheet library="css" name="default.css"/>
+        <h:outputStylesheet library="css" name="cssLayout.css"/>
+        <h:outputScript library="javascript" name="calendar_es.js" /> <!-- Para que <p:calendar> tenga todos los nombres en español --> 
+        <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Tangerine|Open+Sans|Lato|Arvo|Vollkorn|Droid+Sans"/> <!--Google Fonts API-->
+        <link href="#{resource['images/favicon.ico']}" rel="shortcut icon" type="image/x-icon" /> <!-- FavIcon -->
+
+        <title>Gestión Administrador</title>
+    </h:head>
+
+    <h:body>
+
+        <div id="top" class="top">
+
+            <h:form>
+                <p:megaMenu orientation="horizontal">
+
+                    <p:menuitem value="Inicio" outcome="/login" icon="fa fa-home" style="color: #1D27A0;border: solid blue 1px;"/>
+
+                    <p:menuitem class="derecha" id="right" value="Cerrar Sesión" action="#{sessionManagedBean.doLogout()}" ajax="false" icon="fa fa-power-off" style="position: absolute; right: 6px;color: black;border: solid black 1px;"/>
+
+                    <p:separator style="width:100%"/>
+
+                    <p:submenu label="Alumnos" icon="fa fa-user">
+                        <p:column>
+                            <p:submenu label="Alumnos">
+                                <p:menuitem value="Ver alumnos" outcome="/admin/gestionAlumnos" icon="fa fa-users" style="color: #1D27A0"/>
+                                <p:menuitem value="Registrar alumno" outcome="/alumno/altaAlumno" icon="fa fa-user-plus" style="color: #990000"/>
+                                <p:menuitem value="Confirmar inscripción" outcome="/admin/confirmarAlumno" icon="fa fa-check-circle" style="color: green"/>                              
+                            </p:submenu>
+                        </p:column>
+                    </p:submenu>
+
+                    <p:submenu label="Profesores" icon="fa fa-user">
+                        <p:column>
+                            <p:submenu label="Profesores" style="color: ##{randomColorGenerator.randomColor()}">
+                                <p:menuitem value="Ver profesores" outcome="/admin/gestionProfesores" icon="fa fa-users" style="color: #1D27A0"/>
+                                <p:menuitem value="Registrar profesor" outcome="/admin/altaProfesor" icon="fa fa-user-plus" style="color: #990000"/>
+                                <p:menuitem value="Inscribir profesor a Materias" outcome="/admin/altaMateriaProfesor" icon="fa fa-file-text" style="color: #7E4F2C"/>
+                            </p:submenu>
+                        </p:column>
+                    </p:submenu>
+
+                    <p:submenu label="Comisiones" icon="fa fa-list-alt">
+                        <p:column>
+                            <p:submenu label="Comisiones" style="color: ##{randomColorGenerator.randomColor()}">
+                                <p:menuitem value="Ver Comisiones" outcome="/admin/gestionComisiones" icon="fa fa-list-ol" style="color: #1D27A0"/>
+                                <p:menuitem value="Registrar Comisión" outcome="/admin/altaComision" icon="fa fa-plus-square" style="color: #990000"/>
+                                <p:separator/>
+                                <p:menuitem value="Ver Materias de Comisión" outcome="/admin/gestionMaterias" icon="fa fa-list" style="color: #1D27A0"/>
+                                <p:menuitem value="Registrar Materia de Comisión" outcome="/admin/altaMateriaComision" icon="fa fa-plus-square" style="color: #990000"/>
+                            </p:submenu>
+                        </p:column>
+                    </p:submenu>
+
+                    <p:submenu label="Escuelas Sede" icon="fa fa-university">
+                        <p:column>
+                            <p:submenu label="Escuelas Sede">
+                                <p:menuitem value="Ver Escuelas Sede" outcome="/admin/gestionEscuelasSede" icon="fa fa-university" style="color: #9C8E8E"/>
+                                <p:menuitem value="Registrar Escuela Sede" outcome="/admin/altaEscuelaSede" icon="fa fa-user-plus" style="color: #990000"/>
+                            </p:submenu>
+                        </p:column>
+                    </p:submenu>
+
+                    <p:submenu label="Escuelas Origen" icon="fa fa-university">
+                        <p:column>
+                            <p:submenu label="Escuelas Origen">
+                                <p:menuitem value="Ver Escuelas Origen" outcome="/admin/gestionEscuelasOrigen" icon="fa fa-university" style="color: #9C8E8E"/>
+                            </p:submenu>
+                        </p:column>
+                    </p:submenu>
+
+                    <p:submenu label="Actas" icon="fa fa-files-o">
+                        <p:column>
+                            <p:submenu label="Actas">
+                                <p:menuitem value="Actas Volante" outcome="/admin/actaVolante" icon="fa fa-file-text" style="color: #6C8598"/>
+                                <p:menuitem value="Actas Resumen" outcome="/admin/actaResumen" icon="fa fa-file-text" style="color: #7E4F2C"/>
+                            </p:submenu>
+                        </p:column>
+                    </p:submenu>
+
+                    <p:submenu label="Estadísticas" icon="fa fa-bar-chart">
+                        <p:column>
+                            <p:submenu label="Estadísticas">
+                                <p:menuitem value="Estadísticas" outcome="/admin/estadisticas" icon="fa fa-pie-chart fa-spin" style="color: #{randomColorGenerator.randomColor()}"/>
+                            </p:submenu>
+                        </p:column>
+                    </p:submenu>
+
+                    <p:menuitem value="Configuración" action="/admin/configuracion" icon="fa fa-cog fa-spin"/>
+
+                </p:megaMenu>
+                
+            </h:form>
+
+            <ui:insert name="top"></ui:insert>
+        </div>
+
+        <div id="content" class="center_content">
+
+            <!-- Status -->
+            <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+            <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false" styleClass="transparent">
+                <p:graphicImage name="/images/loaders/svg/default.svg"/>
+            </p:dialog>
+
+            <br/>
+            <p:clock pattern="HH:mm dd/MM/yyyy"/>
+            <br/><br/>
+
+            <ui:insert name="content"></ui:insert>
+        </div>
+
+    </h:body>
+
+
+</html>

@@ -1,0 +1,89 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="/WEB-INF/layout/plantillaAlumno.xhtml">
+
+            <ui:define name="content">
+
+                <h:form id="form">
+
+                    <!-- DataTable muestra comisiones a las que esta inscripto. Puede darse de baja -->
+                    <p:dataTable id="comisionesDT" var="c" value="#{comisionesManagedBean.comisiones}" widgetVar="comisionesBajaTable" emptyMessage="No se encontraron comisiones con ese criterio."
+                                 filteredValue="#{comisionesManagedBean.comisionesFiltradas}" selection="#{comisionesManagedBean.comisionSeleccionada}" rowKey="#{c.numero}">
+
+                        <!-- Buscador General -->
+                        <f:facet name="header">   
+                            <h1>Comisiones Inscriptas</h1> <br/>                   
+                            <h:outputText value="Buscar: " />
+                            <p:inputText id="globalFilter" onkeyup="PF('comisionesBajaTable').filter()" style="width:150px" placeholder="Ingresa palabras clave"/> 
+                        </f:facet>
+
+                        <!-- Checkbox -->
+                        <p:column selectionMode="single" style="width:16px;text-align:center"/>
+
+                        <!-- Columnas -->
+                        <p:column headerText="Número de comision" style="text-align:center" filterBy="#{c.numero}" width="5%" filterStyle="width: 24px" filterMaxLength="3" filterMatchMode="contains" sortBy="#{c.numero}">
+                            <h:outputText value="#{c.numero}" />
+                        </p:column>
+
+                        <p:column headerText="Nombre Materia" filterBy="#{c.materiaComision.nombre}" filterMatchMode="contains" sortBy="#{c.materiaComision.nombre}">
+                            <f:facet name="filter">
+                                <p:selectOneMenu onchange="PF('comisionesBajaTable').filter()" >
+                                    <f:selectItem itemLabel="------------------------------------ TODAS -------------------------------------" itemValue="#{null}" noSelectionOption="true" />
+                                    <f:selectItems value="#{materiasManagedBean.materiasComision}" var="m" itemLabel="#{m.nombre}" itemValue="#{m.id}"/>
+                                </p:selectOneMenu>
+                            </f:facet>
+                            <h:outputText value="#{c.materiaComision.nombre}" />
+                        </p:column>
+
+                        <p:column headerText="Dia" filterBy="#{c.dia}" filterMatchMode="contains" sortBy="#{c.dia}">
+                            <h:outputText value="#{c.dia}" />
+                        </p:column>
+
+                        <p:column headerText="Horario" filterBy="#{c.horario}" width="10%" filterMatchMode="contains" sortBy="#{c.horario}">
+                            <h:outputText value="#{c.horario}" />
+                        </p:column>
+
+                        <p:column headerText="Escuela" filterBy="#{c.escuelaSede.nombre}" filterMatchMode="contains" sortBy="#{c.escuelaSede.nombre}">
+                            <h:outputText value="#{c.escuelaSede.nombre}" />
+                        </p:column>
+
+                        <f:facet name="footer" >
+                            Estás inscripto en #{comisionesManagedBean.comisiones.size()} comision/es.
+                            <br/>
+                        </f:facet>
+
+                    </p:dataTable>
+
+                    <br/>
+
+                    <!-- Button para confirmar baja de comision -->
+                    <p:commandButton value="Darse de baja de comisión seleccionada" style="height: 40px; color: brown" icon="ui-icon-trash" actionListener="#{comisionesManagedBean.bajaComisionAlmuno}" update="form"
+                                     oncomplete="PF('comisionesBajaTable').clearFilters()">
+                        <p:confirm header="Confirmación" message="¿Estás seguro?" icon="ui-icon-alert" />
+                    </p:commandButton>
+
+                    <!-- Ventana para confirmar baja de comision seleccionada -->
+                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                        <p:commandButton value="Sí" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                    </p:confirmDialog>
+
+                    <!-- Mensaje con resultados -->
+                    <p:growl id="message" showDetail="true" />
+
+                </h:form>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <h:outputStylesheet library="css" name="normalize.css"/>
+        <h:outputStylesheet library="css" name="default.css"/>
+        <h:outputStylesheet library="css" name="cssLayout.css"/>
+        <link href="#{resource['images/favicon.ico']}" rel="shortcut icon" type="image/x-icon" /> <!-- FavIcon -->
+
+        <title>Gestión Profesor</title>
+    </h:head>
+
+    <h:body>
+
+        <div id="top" class="top" style="padding:1px;border:3px solid #043999;">  
+            <h:form>
+                <h:link outcome="/login" style="display: block;background-image: url(#{resource['images/blue.jpg']});background-repeat: round;">
+                    <p:graphicImage value="/resources/images/coafines3.png" width="500px"/>
+                </h:link>
+            </h:form>
+
+            <ui:insert name="top">   
+            </ui:insert>
+        </div>
+
+        <div id="left">
+
+            <p:clock pattern="HH:mm dd/MM/yyyy"/>
+            <br/><br/>
+
+            <h:form>
+
+                <p:megaMenu orientation="vertical">
+
+                    <p:menuitem value="Inicio" outcome="/profesor/homeProfesor" icon="fa fa-fw fa-home" />
+
+                    <p:submenu label="Profesor" icon="fa fa-fw fa-user-circle-o">
+                        <p:column>
+                            <p:submenu label="Profesor">
+                                <p:menuitem value="Modificar tus datos personales" outcome="/profesor/datosProfesor" icon="fa fa-fw fa-address-card"/>
+                            </p:submenu>
+                        </p:column>
+                    </p:submenu>
+
+                    <p:submenu label="Comisiones" icon="fa fa-fw fa-list-alt">
+                        <p:column>
+                            <p:submenu label="Comisiones">
+                                <p:menuitem value="Ver Comisiones a cargo" outcome="/profesor/gestionComisiones" icon="fa fa-fw fa-list-alt"/>
+                            </p:submenu>
+                        </p:column>
+                    </p:submenu>
+
+                    <p:submenu label="Actas Volante" icon="fa fa-fw fa-files-o">
+                        <p:column>
+                            <p:submenu label="Actas">
+                                <p:menuitem value="Actas Volante" outcome="/profesor/actaVolante" icon="fa fa-fw fa-file-text"/>
+                            </p:submenu>
+                        </p:column>
+                    </p:submenu>
+
+                    <p:separator/>
+
+                    <p:menuitem value="Cerrar Sesión" action="#{sessionManagedBean.doLogout()}" ajax="false" icon="fa fa-power-off" style="color: black;"/>
+
+                </p:megaMenu>
+
+            </h:form>
+
+            <ui:insert name="left"></ui:insert>
+        </div>
+
+        <div id="content" class="left_content">
+
+            <!-- Status -->
+            <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+            <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false" styleClass="transparent">
+                <p:graphicImage name="/images/loaders/svg/default.svg"/>
+            </p:dialog>
+
+            <ui:insert name="content"></ui:insert>
+        </div>
+
+        <div id="bottom">
+            <ui:insert name="bottom"></ui:insert>
+            Plan COA-FinEs™ 2015
+        </div>
+
+    </h:body>
+
+</html>

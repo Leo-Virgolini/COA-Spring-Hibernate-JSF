@@ -1,0 +1,255 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <body>
+
+        <ui:composition template="/WEB-INF/layout/plantillaProfesor.xhtml">
+
+            <ui:define name="content">
+
+                <h:form id="form">
+
+                    <h1>Actas Volante</h1>
+
+                    <br/><br/>
+                    
+                    <h:panelGrid columns="3">
+
+                    <h:outputLabel value="Comisión: " for="comision"/>
+                    <p:selectOneMenu id="comision" label="Escuela Sede" required="true" value="#{comisionesManagedBean.comision}" converter="omnifaces.SelectItemsConverter" requiredMessage="Selecciona la comisión.">
+                        <f:selectItem itemLabel="Selecciona Comisión" itemValue=""/>
+                        <f:selectItems value="#{comisionesManagedBean.comisiones}" var="c" itemLabel="#{c.numero}: #{c.materiaComision.nombre}" itemValue="#{c}"/>    
+                        <p:ajax event="change" update="materiasAlumnoDT" listener="#{materiasManagedBean.obtenerMateriasAlumnoAprobadasComision(comisionesManagedBean.comision)}"/>
+                    </p:selectOneMenu>
+                    <p:message for="comision"/>
+                    
+                    <h:outputLabel value="Ingresa la dirección del documento origen: " for="direccionOrigen"/>
+                    <p:inputText id="direccionOrigen" label="Direccion" required="true" size="60" maxlength="70" requiredMessage="Ingresa la dirección origen del documento." 
+                                 value="#{actasManagedBean.direccionOrigenVolante}">
+                    </p:inputText>
+                    <p:message for="direccionOrigen"/>
+
+                    <h:outputLabel value="Ingresa la dirección destino: " for="direccionDestino"/>
+                    <p:inputText id="direccionDestino" label="Direccion" required="true" size="60" maxlength="70" requiredMessage="Ingresa la dirección destino del documento." 
+                                 value="#{actasManagedBean.direccionDestinoVolante}">
+                    </p:inputText>
+                    <p:message for="direccionDestino"/>
+                    
+                    </h:panelGrid>
+                                       
+                    <br/>
+
+                    <p:commandButton id="confirmar" value="Generar Actas Volante" update="form" action="#{actasManagedBean.generarActasVolante(materiasManagedBean.materiasAlumno)}" icon="ui-icon-disk"/>
+
+                    <br/><br/>
+
+                    <!-- DataTable muestra todos los alumnos aprobados de esa escuela sede -->
+                    <p:dataTable id="materiasAlumnoDT" value="#{materiasManagedBean.materiasAlumno}" var="ma" widgetVar="materiasAlumno" emptyMessage="No se encontraron materias de alumnos con ese criterio."
+                                 rowKey="#{ma.id}" rowIndexVar="rowIndex" 
+                                 tableStyle="width:auto">
+
+                        <!-- Buscador General -->
+                        <f:facet name="header">   
+                            <h1>Materias Alumnos</h1> <br/>
+                            <h2>Comisión N°: #{comisionesManagedBean.comision.numero} -
+                            Profesor: #{comisionesManagedBean.comision.profesor.apellido}, #{comisionesManagedBean.comision.profesor.nombre}  -
+                            Cantidad: #{comisionesManagedBean.comision.cantidad}
+                            </h2>
+                            <h:outputText value="Buscar "/>
+                            <p:inputText id="globalFilter" onkeyup="PF('materiasAlumno').filter()" style="width:150px" placeholder="Ingresa palabras clave"/> 
+                            <p:commandButton id="toggler" type="button" value="Columnas" style="float:right" icon="ui-icon-calculator" />
+                            <p:columnToggler datasource="materiasAlumnoDT" trigger="toggler" />
+                        </f:facet>
+
+                        <!-- Columnas -->
+                        <p:column headerText="N°">
+                            <h:outputText value="#{rowIndex+1}" />
+                        </p:column>
+
+                        <p:column headerText="Nombre Materia" filterBy="#{ma.materiaComision.nombre}" filterMatchMode="contains" sortBy="#{ma.materiaComision.nombre}" width="30%">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText style="font-weight: bolder" value="#{ma.materiaComision.nombre}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:selectOneMenu id="materias" value="#{ma.materiaComision}" label="Materias" converter="omnifaces.SelectItemsConverter" required="true"
+                                                     filter="true" filterMatchMode="contains" style="width: 88%">
+                                        <f:selectItems value="#{materiasManagedBean.materiasComision}" var="mc" itemLabel="#{mc.nombre}" itemValue="#{mc}"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Año" sortBy="#{ma.anio}" style="text-align:center; font-weight: bolder;" width="5%">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText style="color: #045491" value="#{ma.anio}°" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:selectOneMenu id="año" label="Año" required="true" value="#{ma.anio}">
+                                        <f:selectItem itemLabel="1°" itemValue="1"/>
+                                        <f:selectItem itemLabel="2°" itemValue="2"/>
+                                        <f:selectItem itemLabel="3°" itemValue="3"/>
+                                        <f:selectItem itemLabel="4°" itemValue="4"/>
+                                        <f:selectItem itemLabel="5°" itemValue="5"/>
+                                        <f:selectItem itemLabel="6°" itemValue="6"/>
+                                        <f:selectItem itemLabel="A" itemValue="A"/>
+                                        <f:selectItem itemLabel="B" itemValue="B"/>
+                                        <f:selectItem itemLabel="C" itemValue="C"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Nota" sortBy="#{ma.nota}" style="text-align: center" width="5%">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{ma.nota}" style="font-weight: bold; color: #045491"/></f:facet>
+                                <f:facet name="input">
+                                    <p:inputText value="#{ma.nota}" label="Nota" size="2" maxlength="2">
+                                        <f:validateLongRange minimum="0" maximum="10" />   
+                                        <f:validateLength minimum="1" maximum="2" />
+                                    </p:inputText>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Nombre" filterBy="#{ma.alumno.nombre}" filterMatchMode="contains" filterStyle="width:80%" sortBy="#{ma.alumno.nombre}">               
+                            <p:cellEditor>     
+                                <f:facet name="output"><h:outputText value="#{ma.alumno.nombre}" style="font-weight: bold"/></f:facet>
+                                <f:facet name="input">
+                                    <p:inputText id="nombre" label="Nombres" required="true" maxlength="30" requiredMessage="Ingresa el nombre." 
+                                                 value="#{ma.alumno.nombre}" style="width: 90%">                   
+                                        <f:validateRegex pattern="^[a-zA-Zá-úñ ]+$" />
+                                        <f:validateLength minimum="3" maximum="30"/>
+                                    </p:inputText>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Apellido" filterBy="#{ma.alumno.apellido}" filterMatchMode="contains" filterStyle="width:80%" sortBy="#{ma.alumno.apellido}">
+                            <p:cellEditor>     
+                                <f:facet name="output"><h:outputText value="#{ma.alumno.apellido}" style="font-weight: bold"/></f:facet>
+                                <f:facet name="input">
+                                    <p:inputText id="apellido" label="Apellido" required="true" maxlength="30" requiredMessage="Ingresa el apellido." 
+                                                 value="#{ma.alumno.apellido}" style="width: 90%"> 
+                                        <f:validateRegex pattern="^[a-zA-Zá-úñ ]+$" />
+                                        <f:validateLength minimum="3" maximum="30"/>
+                                    </p:inputText>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="DNI" filterBy="#{ma.alumno.dni}" style="font-size: smaller;" filterMatchMode="contains" filterStyle="width:80%" filterMaxLength="9">
+                            <p:cellEditor>     
+                                <f:facet name="output"><h:outputText value="#{ma.alumno.dni}"/></f:facet>
+                                <f:facet name="input">
+                                    <p:inputText id="dni" value="#{ma.alumno.dni}" label="Documento" required="true" size="5" maxlength="8" requiredMessage="Ingresa el DNI." style="width: 85%">                           
+                                        <f:validateLongRange minimum="10000000" maximum="100000000" />   
+                                        <f:validateRegex pattern="^[0-9]+$" />
+                                        <f:validateLength minimum="8" maximum="8" />
+                                    </p:inputText>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Fecha de nacimiento" style="font-size: smaller;" filterBy="#{ma.alumno.fechaNacimiento}" filterMatchMode="contains" filterStyle="width:80%" sortBy="#{ma.alumno.fechaNacimiento}" filterMaxLength="10">
+                            <p:cellEditor>     
+                                <f:facet name="output">
+                                    <h:outputText value="#{ma.alumno.fechaNacimiento}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputText>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:calendar id="nacimiento" label="Fecha de Nacimiento" pattern="dd/MM/yyyy" mask="true" locale="es" pagedate="1/7/1992" mindate="1/1/1920" maxdate="31/12/1999" yearRange="c-70:c+10" 
+                                                showOn="button" navigator="true" required="true" size="6" maxlength="10" requiredMessage="Ingresa la fecha de nacimiento."
+                                                value="#{ma.alumno.fechaNacimiento}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        <f:validateLength minimum="10"/>
+                                        <f:validator validatorId="birthDateValidator"/>
+                                    </p:calendar>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Escuela Origen" filterBy="#{ma.alumno.escuelaOrigen.nombre}" filterMatchMode="contains" filterStyle="width:80%" sortBy="#{ma.alumno.escuelaOrigen.nombre}">
+                            <h:outputText value="#{ma.alumno.escuelaOrigen.nombre}" />
+                        </p:column>
+
+                        <p:column headerText="Resolución" style="font-size: smaller;" filterBy="#{a.resolucion}" filterMatchMode="contains" filterStyle="width:80%">
+                            <p:cellEditor>     
+                                <f:facet name="output"><h:outputText value="#{ma.alumno.resolucion}" /></f:facet>
+                                <f:facet name="input">
+                                    <p:inputText id="resolucion" label="Resolución" required="true" size="10" maxlength="10" requiredMessage="Ingresa el número de resolución." validatorMessage="Ingresa el número de resolución correctamente."
+                                                 value="#{ma.alumno.resolucion}">
+                                        <f:validateRegex pattern="^[0-9-/ ]+$"/>
+                                        <f:validateLength minimum="4" maximum="15" />
+                                    </p:inputText>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Modalidad" style="font-size: smaller;" filterBy="#{ma.alumno.modalidad}" filterMatchMode="contains" filterStyle="width:80%" sortBy="#{ma.alumno.modalidad}">
+                            <p:cellEditor>     
+                                <f:facet name="output"><h:outputText value="#{ma.alumno.modalidad}" /></f:facet>
+                                <f:facet name="input">
+                                    <p:inputText id="modalidad" label="Modalidad" required="true" size="10" maxlength="20" requiredMessage="Ingresa la modalidad." validatorMessage="Ingresa la modalidad correctamente."
+                                                 value="#{ma.alumno.modalidad}">
+                                        <f:validateRegex pattern="^[a-zA-Z. ]+$" />
+                                        <f:validateLength minimum="5" maximum="20" />
+                                    </p:inputText>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Provincia Escuela" sortBy="#{ma.alumno.escuelaOrigen.localidad.distrito.provincia.descripcion}">                     
+                            <f:facet name="filter">
+                                <p:selectOneMenu onchange="PF('materiasAlumno').filter()" autoWidth="false" style="width: 75%">
+                                    <f:selectItem itemLabel="-- TODAS --" itemValue="#{null}" noSelectionOption="true" />
+                                    <f:selectItems value="#{localidadesManagedBean.provincias}" var="p" itemLabel="#{p.descripcion}" itemValue="#{p.descripcion}"/>
+                                </p:selectOneMenu>
+                            </f:facet> 
+                            <h:outputText value="#{ma.alumno.escuelaOrigen.localidad.distrito.provincia.descripcion}" />
+                        </p:column>
+
+                        <p:column headerText="Localidad, Distrito Escuela" sortBy="#{ma.alumno.escuelaOrigen.localidad.descripcion}, #{ma.alumno.escuelaOrigen.localidad.distrito.descripcion}">
+                            <h:outputText value="#{ma.alumno.escuelaOrigen.localidad.descripcion}, #{ma.alumno.escuelaOrigen.localidad.distrito.descripcion}" />
+                        </p:column>
+
+                        <f:facet name="footer" >
+                            En total hay #{materiasManagedBean.materiasAlumno.size()} alumnos.
+                        </f:facet>
+
+                    </p:dataTable>
+
+                    <br/>
+
+                    <!-- Exporter: necesita la libreria Apache poi. Para evitar columnas no deseadas:exportable="false" -->
+                    <p:fieldset legend="Exportar a Excel" style="width: 80px">                                            
+                        <h:commandLink>
+                            <p:graphicImage name="/images/excel.jpg" width="80"/>
+                            <p:dataExporter type="xls" target="materiasAlumnoDT" fileName="alumnos"/>
+                        </h:commandLink>                   
+                    </p:fieldset>
+
+                    <br/>
+
+                    <!-- Ventana para confirmar baja  -->
+                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                        <p:commandButton value="Sí" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                    </p:confirmDialog>
+
+                    <!-- Mensaje con resultados -->
+                    <p:growl id="message" showDetail="true" />
+
+                </h:form>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="/WEB-INF/layout/plantillaLogin.xhtml">
+
+            <ui:define name="content">
+
+                <h:form id="login">
+
+                    <f:metadata>
+                        <f:viewAction action="#{loginManagedBean.onLoad}"/>
+                    </f:metadata>
+
+                    <p:panel header="INGRESO" style="font-family: 'Lato'">
+                        <h:panelGrid id="login" columns="3" cellpadding="5">
+
+                            <h:outputLabel for="email" value="E-mail: " style="font-family: 'Arvo';font-size: 16px"/> 
+                            <p:inputText id="email" value="#{loginManagedBean.usuario.email}" required="true" label="E-mail" placeholder="E-mail" size="30" maxlength="30" requiredMessage="Ingresa tu e-mail." validatorMessage="Ingresa un email correcto.">          
+                                <!-- <f:validateRegex pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                                <f:validateLength minimum="7" maximum="30" /> -->
+                                <i class="fa fa-envelope-o" 
+                                   style="padding: 4px 8px;
+                                   font-size: 14px;
+                                   font-weight: normal;
+                                   line-height: 1;
+                                   color: #555;
+                                   text-align: center;
+                                   background-color: #eee;
+                                   border: 1px solid #ccc;
+                                   border-radius: 4px;"/>
+                                <p:keyFilter regEx="/[a-z0-9_\.\-@]/i"/>
+                            </p:inputText>
+                            <p:message for="email"/>
+
+                            <h:outputLabel for="pass" value="Contraseña: " style="font-family: 'Arvo';font-size: 16px;"/>                
+                            <p:password id="pass" value="#{loginManagedBean.usuario.password}" required="true" size="30" maxlength="25" validatorMessage="Ingresa una contraseña correcta (entre 6 y 25 caracteres alfanúmericos)." label="Contraseña" placeholder="Contraseña" requiredMessage="Ingresa tu contraseña.">
+                                <i class="fa fa-key" 
+                                   style="padding: 4px 8px;
+                                   font-size: 14px;
+                                   font-weight: normal;
+                                   line-height: 1;
+                                   color: #555;
+                                   text-align: center;
+                                   background-color: #eee;
+                                   border: 1px solid #ccc;
+                                   border-radius: 4px;"/>
+                                <f:validateRegex pattern="^[a-zA-Z0-9]+$" />
+                                <f:validateLength minimum="3" maximum="25" />   
+                            </p:password>
+                            <p:message for="pass"/>
+
+                            <h:outputLabel value="Recordarme: " style="font-family: 'Arvo';font-size: 14px;"/>
+                            <p:selectBooleanCheckbox id="recordar" label="Recordar"/>
+
+                            <p:focus context="login"/>
+
+                            <p:commandButton icon="fa fa-sign-in" action="#{loginManagedBean.doLogin()}" value="Iniciar Sesión" ajax="false" update="@form" style="color: #0071B7;height: 30px;"/>
+
+                        </h:panelGrid>
+
+                        <p:messages autoUpdate="true" globalOnly="true" />
+                        <p:growl globalOnly="true"/>
+                    </p:panel>
+
+                </h:form>
+
+                <br/>
+
+                <p:graphicImage value="/resources/images/password.png" width="30" style="vertical-align: middle"/>
+                <p:link value="Olvidé la contraseña" style="font-style:italic;" outcome="recuperarContrasenia"/>
+
+                <p:separator/>
+
+                <p:graphicImage value="/resources/images/register3.png" width="30" style="vertical-align: middle"/>
+                <p:link value="REGISTRARSE" style="font-size: 15px;color: #0071B7; background-color: #c2dfef" outcome="alumno/altaAlumno"/>
+
+                <br/>
+                <p:separator/>
+
+                <p:graphicImage value="/resources/images/email.png" width="30" style="vertical-align: middle"/>
+                <h:outputLink value="mailto:leo.virgolini@gmail.com">
+                    <f:param name="subject" value="Página Web COA" />
+                    <f:param name="body" value="" />
+                    <h:outputText value="Contáctanos por cualquier consulta"/>
+                </h:outputLink>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>
+

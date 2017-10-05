@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <h:outputStylesheet library="css" name="normalize.css"/>
+        <h:outputStylesheet library="css" name="default.css"/>
+        <h:outputStylesheet library="css" name="cssLayout.css"/>
+        <h:outputScript library="javascript" name="calendar_es.js" /> <!-- Para que <p:calendar> tenga todos los nombres en español --> 
+        <link href="#{resource['images/favicon.ico']}" rel="shortcut icon" type="image/x-icon" /> <!-- FavIcon -->
+
+        <title>Gestión Escuela Sede</title>
+    </h:head>
+
+    <h:body>
+
+        <div id="top" class="top">
+
+            <h:form>
+                <p:megaMenu orientation="horizontal">
+
+                    <p:menuitem value="Inicio" outcome="/escuelaSede/homeEscuelaSede" icon="ui-icon-home"/>
+
+                    <p:submenu label="Comisiones" icon="ui-icon-note">
+                        <p:column>
+                            <p:submenu label="Comisiones">
+                                <p:menuitem value="Ver Comisiones" outcome="/escuelaSede/gestionComisiones" icon="ui-icon-search"/>
+                            </p:submenu>
+                        </p:column>
+                    </p:submenu>
+
+                    <p:submenu label="Actas" icon="ui-icon-script">
+                        <p:column>
+                            <p:submenu label="Actas">
+                                <p:menuitem value="Actas Resumen" outcome="/escuelaSede/actaResumen" icon="ui-icon-document"/>
+                            </p:submenu>
+                        </p:column>
+                    </p:submenu>
+
+                    <p:menuitem class="derecha" id="right" value="Cerrar Sesión" action="#{sessionManagedBean.doLogout()}" ajax="false" icon="fa fa-power-off" style="position: absolute; right: 6px;color: black;border: solid black 1px;"/>
+
+                </p:megaMenu>
+
+            </h:form>
+
+            <ui:insert name="top"></ui:insert>
+        </div>
+
+        <div id="content" class="center_content">
+
+            <!-- Status -->
+            <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+            <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false" styleClass="transparent">
+                <p:graphicImage name="/images/loaders/svg/default.svg"/>
+            </p:dialog>
+
+            <br/>
+            <p:clock pattern="HH:mm dd/MM/yyyy"/>
+            <br/><br/>
+
+            <ui:insert name="content"></ui:insert>
+        </div>
+
+    </h:body>
+
+</html>

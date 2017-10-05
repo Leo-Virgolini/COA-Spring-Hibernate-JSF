@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <h:outputStylesheet library="css" name="normalize.css"/>
+        <h:outputStylesheet library="css" name="default.css"/>
+        <h:outputStylesheet library="css" name="cssLayout.css"/>
+        <h:outputScript library="javascript" name="calendar_es.js" /> <!-- Para que <p:calendar> tenga todos los nombres en español -->  
+        <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Tangerine|Open+Sans|Lato|Arvo|Vollkorn"/> <!-- Google Fonts API -->
+        <link href="#{resource['images/favicon.ico']}" rel="shortcut icon" type="image/x-icon" /> <!-- FavIcon -->
+
+        <title>Plan COA FinEs</title>
+    </h:head>
+
+    <h:body>
+
+        <p:layout fullPage="true" style="background-image: url(#{resource['images/bgcontrol.jpg']});">
+
+            <p:layoutUnit id="top" position="north" style="font-size: 0px;border:3px solid #043999;">
+
+                <h:form>
+                    <h:link outcome="/login" style="display: block;background-image: url(#{resource['images/blue.jpg']});background-repeat: round;">
+                        <p:graphicImage value="/resources/images/coafines3.png" width="500px"/>
+                    </h:link>
+                </h:form>
+
+                <ui:insert name="top"></ui:insert>
+
+            </p:layoutUnit>
+
+            <p:layoutUnit position="center" size="1000">
+
+                <!-- Status -->
+                <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+                <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false" styleClass="transparent">
+                    <p:graphicImage name="/images/loaders/svg/default.svg"/>
+                </p:dialog>
+
+                <br/>
+                <p:clock pattern="HH:mm dd/MM/yyyy"/>
+                <br/><br/>
+
+                <h:form>
+                    <p:menubar>
+                        <p:menuitem value="Inicio" outcome="/login" icon="fa fa-home"/>
+                        <p:menuitem value="¿Qué es el Plan COA-FINES?" outcome="/informacion" icon="fa fa-info-circle"/>
+                        <p:menuitem value="Requisitos" outcome="/requisitos" icon="fa fa-exclamation-circle"/>
+                    </p:menubar>
+
+                </h:form>
+
+                <br/>
+                <ui:insert name="content"></ui:insert>
+
+            </p:layoutUnit>
+
+        </p:layout>
+    </h:body>
+
+
+</html>

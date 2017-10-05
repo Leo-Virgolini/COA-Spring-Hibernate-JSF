@@ -1,0 +1,274 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="/WEB-INF/layout/plantillaProfesor.xhtml">
+
+            <ui:define name="content">
+
+                <h:form id="form">
+
+                    <!-- DataTable muestra las comisiones del Profesor -->
+                    <p:dataTable id="comisionesDT" var="c" value="#{comisionesManagedBean.comisionesProfesor}" widgetVar="comisionesTable" emptyMessage="No se encontraron comisiones con ese criterio."
+                                 filteredValue="#{comisionesManagedBean.comisionesFiltradas}" rowKey="#{c.numero}" tableStyle="width:auto">
+
+                        <!-- Buscador General -->
+                        <f:facet name="header">   
+                            <h1>Comisiones</h1> <br/>             
+                            <h:outputText value="Buscar: " />
+                            <p:inputText id="globalFilter" onkeyup="PF('comisionesTable').filter()" style="width:150px" placeholder="Ingresa palabras clave"/> 
+                        </f:facet>
+
+                        <!-- Columnas -->
+                        <p:column headerText="Datos de alumnos" exportable="false" style="width:56px">
+                            <p:rowToggler />
+                        </p:column>
+
+                        <p:column headerText="Número de comision" style="text-align:center" width="5%" filterStyle="width: 24px" filterMaxLength="3" filterBy="#{c.numero}" filterMatchMode="contains" sortBy="#{c.numero}">
+                            <h:outputText value="#{c.numero}" />
+                        </p:column>
+
+                        <p:column headerText="Materia" width="25%" filterBy="#{c.materiaComision.nombre}" filterMatchMode="contains" sortBy="#{c.materiaComision.nombre}">             
+                            <h:outputText value="#{c.materiaComision.nombre}" />
+                        </p:column> 
+
+                        <p:column headerText="Dia" width="15%" sortBy="#{c.dia}">                             
+                            <h:outputText value="#{c.dia}" />
+                        </p:column>
+
+                        <p:column headerText="Horario" width="15%">   
+                            <h:outputText value="#{c.horario} hrs." />
+                        </p:column>
+
+                        <!-- Ver fechas de las comisiones -->
+                        <p:column headerText="Calendario" exportable="false" style="width: 8%; text-align: center">
+                            <p:commandButton process="comisionesDT" update=":form:multiCalendarioDetail" icon="ui-icon-calendar" value="Ver fechas" style="height: 40px;width: 75px; color: #045491" 
+                                             actionListener="#{scheduleView.obtenerFecha(c)}" oncomplete="PF('multiCalendarioDialog').show()"/>
+                        </p:column>
+
+                        <p:column headerText="Escuela" width="15%" sortBy="#{c.escuelaSede.nombre}"> 
+                            <h:outputText value="#{c.escuelaSede.nombre}" />
+                        </p:column>
+
+                        <p:column headerText="Profesor" width="15%">   
+                            <h:outputText value="#{c.profesor.apellido}, #{c.profesor.nombre}" />
+                        </p:column>
+
+                        <p:column headerText="Cantidad de inscriptos" width="5%" style="text-align:center">  
+                            <h:outputText value="#{c.cantidad}" />
+                        </p:column>
+
+                        <!-- Ver Alumnos inscriptos -->
+                        <p:column headerText="Alumnos inscriptos" exportable="false" style="width: 5%; text-align: center">
+                            <p:commandButton process="comisionesDT" update=":form:multiComisionDetail" icon="ui-icon-search" value="Ver" style="height: 40px; color: #045491" 
+                                             actionListener="#{alumnosManagedBean.obtenerAlumnos(c.numero)}" oncomplete="PF('multiComisionDialog').show()"/>
+                        </p:column>
+
+                        <!-- Ver listado de los Alumnos -->
+                        <p:rowExpansion>
+                            <p:dataTable id="alumnosDT" value="#{c.materiasAlumno}" var="ma" emptyMessage="No hay alumnos inscriptos." editable="true" rowIndexVar="rowIndex" tableStyle="width:auto">                            
+
+                                <!-- Eventos onRowEdit y onRowEditCancel -->
+                                <p:ajax event="rowEdit" listener="#{materiasManagedBean.materiaAlumnoEdit}" update=":form:message"/>
+                                <p:ajax event="rowEditCancel" listener="#{materiasManagedBean.materiaAlumnoCancel}" update=":form:message" />
+
+                                <p:columnGroup type="header">
+                                    <p:row>
+                                        <p:column headerText="N°" colspan="1" rowspan="2" width="3%"/>
+                                        <p:column headerText="Nombre" colspan="1" rowspan="2"/>
+                                        <p:column headerText="Apellido" colspan="1" rowspan="2" />
+                                        <p:column headerText="DNI" colspan="1" rowspan="2"/>
+                                        <p:column headerText="E-Mail" colspan="1" rowspan="2" />
+                                        <p:column headerText="Materia adeudada" colspan="1" rowspan="2" />
+                                        <p:column headerText="Año" colspan="1" rowspan="2" width="3%" />
+                                        <p:column headerText="Asistencia" colspan="8" width="30%"/>
+                                        <p:column headerText="Nota" colspan="1" rowspan="2" width="5%" />
+                                        <p:column headerText="Modificar" colspan="1" rowspan="2" width="5%"/>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column headerText="Clase 1" colspan="1"/>
+                                        <p:column headerText="Clase 2" colspan="1"/>
+                                        <p:column headerText="Clase 3" colspan="1"/>
+                                        <p:column headerText="Clase 4" colspan="1"/>
+                                        <p:column headerText="Clase 5" colspan="1"/>
+                                        <p:column headerText="Clase 6" colspan="1"/>
+                                        <p:column headerText="Clase 7" colspan="1"/>
+                                        <p:column headerText="Clase 8" colspan="1"/>
+                                    </p:row>
+                                </p:columnGroup>
+
+                                <p:column>
+                                    <h:outputText value="#{rowIndex+1}" />
+                                </p:column>
+
+                                <p:column>
+                                    <h:outputText value="#{ma.alumno.nombre}" />
+                                </p:column>
+
+                                <p:column>
+                                    <h:outputText value="#{ma.alumno.apellido}" />
+                                </p:column>
+
+                                <p:column>
+                                    <h:outputText value="#{ma.alumno.dni}" />
+                                </p:column>
+
+                                <p:column>
+                                    <h:outputText value="#{ma.alumno.email}" />
+                                </p:column>
+
+                                <p:column>
+                                    <h:outputText value="#{ma.materiaComision.nombre}" />
+                                </p:column>
+
+                                <p:column style="text-align: center">
+                                    <h:outputText value="#{ma.anio}°"/>
+                                </p:column>
+
+                                <p:column styleClass="#{(ma.asistencia1)?'presente':'ausente'}">
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{ma.asistencia1?'P':'A'}" /></f:facet>
+                                        <f:facet name="input"><p:selectBooleanCheckbox value="#{ma.asistencia1}"/></f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+                                <p:column styleClass="#{(ma.asistencia2)?'presente':'ausente'}">
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{ma.asistencia2?'P':'A'}" /></f:facet>
+                                        <f:facet name="input"><p:selectBooleanCheckbox value="#{ma.asistencia2}"/></f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+                                <p:column styleClass="#{(ma.asistencia3)?'presente':'ausente'}">
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{ma.asistencia3?'P':'A'}" /></f:facet>
+                                        <f:facet name="input"><p:selectBooleanCheckbox value="#{ma.asistencia3}"/></f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+                                <p:column styleClass="#{(ma.asistencia4)?'presente':'ausente'}">
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{ma.asistencia4?'P':'A'}" /></f:facet>
+                                        <f:facet name="input"><p:selectBooleanCheckbox value="#{ma.asistencia4}"/></f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+                                <p:column styleClass="#{(ma.asistencia5)?'presente':'ausente'}">
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{ma.asistencia5?'P':'A'}"/></f:facet>
+                                        <f:facet name="input"><p:selectBooleanCheckbox value="#{ma.asistencia5}"/></f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+                                <p:column styleClass="#{(ma.asistencia6)?'presente':'ausente'}">
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{ma.asistencia6?'P':'A'}" /></f:facet>
+                                        <f:facet name="input"><p:selectBooleanCheckbox value="#{ma.asistencia6}"/></f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+                                <p:column styleClass="#{(ma.asistencia7)?'presente':'ausente'}">
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{ma.asistencia7?'P':'A'}" /></f:facet>
+                                        <f:facet name="input"><p:selectBooleanCheckbox value="#{ma.asistencia7}"/></f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+                                <p:column styleClass="#{(ma.asistencia8)?'presente':'ausente'}">
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{ma.asistencia8?'P':'A'}" /></f:facet>
+                                        <f:facet name="input"><p:selectBooleanCheckbox value="#{ma.asistencia8}"/></f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+                                <p:column style="text-align: center">
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{ma.nota}" style="font-weight: bold; color: #045491"/></f:facet>
+                                        <f:facet name="input">
+                                            <p:inputText value="#{ma.nota}" label="Nota" size="2" maxlength="2">
+                                                <f:validateLongRange minimum="0" maximum="10" />   
+                                                <f:validateLength minimum="1" maximum="2" />
+                                            </p:inputText>
+                                        </f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+                                <!-- RowEdit -->
+                                <p:column headerText="Modificar" style="font-size: smaller" width="5%" exportable="false">
+                                    <p:rowEditor/>
+                                </p:column>
+
+                            </p:dataTable>
+                        </p:rowExpansion>
+
+                        <f:facet name="footer" >
+                            Estás a cargo de #{comisionesManagedBean.comisionesProfesor.size()} comision/es.
+                        </f:facet>
+
+                    </p:dataTable>
+
+                    <br/>
+
+                    <!-- Exporter: necesita la libreria Apache poi. Para evitar columnas no deseadas:exportable="false" -->
+                    <p:fieldset legend="Exportar a Excel" style="width: 80px">    
+                        <h:commandLink>
+                            <p:graphicImage name="/images/excel.jpg" width="80"/>
+                            <p:dataExporter type="xls" target="comisionesDT" fileName="comisiones"/>
+                        </h:commandLink>   
+                    </p:fieldset>
+
+                    <!-- Ventana que muestra calendario(p:schedule) de una comision -->
+                    <p:dialog header="Calendario" widgetVar="multiCalendarioDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" position="center" height="500px">
+                        <p:outputPanel id="multiCalendarioDetail">
+                            <p:schedule id="scheduleLocale" style="width: 500px" value="#{scheduleView.eventModel}" locale="es" 
+                                        timeZone="GMT-3" clientTimeZone="local" initialDate="#{scheduleView.inicioClases().time}" rightHeaderTemplate="">
+                                <p:ajax event="eventSelect" listener="#{scheduleView.onEventSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();" />
+                            </p:schedule>
+                        </p:outputPanel>
+                    </p:dialog>
+
+                    <!-- Ventana que muestra eventos del calendario al hacer click -->
+                    <p:dialog widgetVar="eventDialog" header="Detalles" showEffect="clip" hideEffect="clip" resizable="false">
+                        <h:panelGrid id="eventDetails" columns="2">    
+                            <p:outputLabel for="comision" value="Datos:" />
+                            <p:outputLabel id="comision" value="#{scheduleView.event.title}"/>
+
+                            <p:outputLabel for="desde" value="Horario desde:" />
+                            <p:outputLabel id="desde" value="#{scheduleView.event.startDate}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                            </p:outputLabel>
+
+                            <p:outputLabel for="hasta" value="Horario hasta:" />
+                            <p:outputLabel id="hasta" value="#{scheduleView.event.endDate}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                            </p:outputLabel>
+                        </h:panelGrid>
+                    </p:dialog> 
+
+                    <!-- Ventana que muestra alumnos inscriptos en cada comision -->
+                    <p:dialog header="Alumnos inscriptos" widgetVar="multiComisionDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+                        <p:outputPanel id="multiComisionDetail">
+                            <p:dataList value="#{alumnosManagedBean.alumnosComision}" var="a" type="ordered" emptyMessage="No hay alumnos inscriptos."
+                                        style="font-weight: bold;">
+                                #{a.apellido}, #{a.nombre}
+                            </p:dataList>
+                        </p:outputPanel>
+                    </p:dialog>
+
+                    <!-- Mensaje con resultados -->
+                    <p:growl id="message" showDetail="true" />
+
+                </h:form>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>
